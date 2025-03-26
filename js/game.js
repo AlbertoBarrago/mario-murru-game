@@ -15,8 +15,7 @@ const COIN_SCORE = 10;
 
 // Game state
 let gameLoaded = false;
-let gameRunning = false; // Set to false initially
-let gameStarted = false; // New flag to track if game has been started
+let gameStarted = false;
 let currentLevel = 1;
 let score = 0;
 let gameOver = false;
