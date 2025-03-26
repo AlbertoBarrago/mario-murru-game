@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario Murru Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="480"></canvas>
+        <div id="loading">Loading game assets...</div>
+        <div id="start-screen">
+            <h1>MARIO MURRU</h1>
+            <p>Use Arrow Keys or WASD to move<br>Space to jump</p>
+            <p class="blink">PRESS ENTER TO START</p>
+            <button id="start-button">START GAME</button>
+        </div>
+        <div id="instructions" style="display: none;">
+            Controls: Arrow Keys/WASD to move, Space to jump<br>
+            Press T to toggle character style (Human/Pepe)<br>
+            Press R to restart game when game over<br>
+            Press M to toggle sound
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function () {
+            document.getElementById('start-button').addEventListener('click', function () {
+                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('instructions').style.display = 'block';
+                setTimeout(function () {
+                    document.getElementById('instructions').style.display = 'none';
+                }, 5000);
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+
+                if (window.startGame) {
+                    window.startGame();
+                }
+            });
+        });
+    </script>
+    <script src="js/game.js" type="module"></script>
+</body>
+
+</html>
