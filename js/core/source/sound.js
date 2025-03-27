@@ -90,7 +90,6 @@ function initSounds() {
     }
   });
 
-  console.warn('Sound system initialized');
 }
 
 export { sounds, playSound, stopSound, toggleMute, initSounds };
