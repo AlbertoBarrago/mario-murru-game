@@ -49,4 +49,4 @@ To modify or extend the game:
 
 ## License
 
-This project is available for free use and modification.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

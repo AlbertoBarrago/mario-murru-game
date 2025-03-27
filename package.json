@@ -1,0 +1,32 @@
+{
+    "name": "mario-murru-game",
+    "version": "1.0.0",
+    "description": "A Mario-style platformer game featuring Mario Murru",
+    "main": "index.html",
+    "scripts": {
+        "start": "npx http-server -o",
+        "lint": "eslint js/",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "mkdir -p dist && cp -R index.html css js assets dist/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/albertobarrago/mario-murru-game.git"
+    },
+    "keywords": [
+        "game",
+        "mario",
+        "platformer",
+        "javascript"
+    ],
+    "author": "Mario Murru",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/username/mario-murru/issues"
+    },
+    "homepage": "https://github.com/username/mario-murru#readme",
+    "devDependencies": {
+        "eslint": "^8.42.0",
+        "http-server": "^14.1.1"
+    }
+}
