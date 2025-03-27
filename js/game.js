@@ -5,14 +5,35 @@ import Player from './utils/player.js';
 import Enemy from './utils/enemies.js';
 import Coin from './utils/coin.js';
 
-// Game state
+/**
+ * @typedef {Object} GameState
+ * @property {boolean} loaded - Whether game assets are loaded
+ * @property {boolean} started - Whether game has started
+ * @property {number} currentLevel - Current game level
+ * @property {number} score - Player's score
+ * @property {boolean} gameOver - Whether game is over
+ */
+
+/** @type {boolean} - Whether game assets are loaded */
 let gameLoaded = false;
+/** @type {boolean} - Whether game has started */
 let gameStarted = false;
+/** @type {number} - Current game level */
 let currentLevel = 1;
+/** @type {number} - Player's score */
 let score = 0;
+/** @type {boolean} - Whether game is over */
 let gameOver = false;
 
-// Game assets
+/**
+ * @typedef {Object} Assets
+ * @property {Object.<string, HTMLImageElement>} images - Game images
+ * @property {Object.<string, HTMLAudioElement>} sounds - Game sounds
+ * @property {number} loaded - Number of assets loaded
+ * @property {number} total - Total number of assets to load
+ */
+
+/** @type {Assets} - Game assets container */
 const assets = {
     images: {},
     sounds: {},
@@ -20,17 +41,31 @@ const assets = {
     total: 0
 };
 
-// Game objects
+/** @type {Player} - Player object */
 let player;
+/** @type {Array<Object>} - Array of platform objects */
 let platforms = [];
+/** @type {Array<Enemy>} - Array of enemy objects */
 let enemies = [];
+/** @type {Array<Coin>} - Array of coin objects */
 let coins = [];
 
-// Canvas setup
+/** @type {HTMLCanvasElement} - Game canvas */
 const canvas = document.getElementById('gameCanvas');
+/** @type {CanvasRenderingContext2D} - Canvas rendering context */
 const ctx = canvas.getContext('2d');
 
-// Game UI elements
+/**
+ * @typedef {Object} UIElement
+ * @property {number} x - X position
+ * @property {number} y - Y position
+ * @property {number} [width] - Width of element
+ * @property {number} [height] - Height of element
+ * @property {number} [borderWidth] - Border width
+ * @property {number} [spacing] - Spacing between elements
+ */
+
+/** @type {UIElement} - Health bar UI element */
 let healthBar = {
     x: 20,
     y: 15,
@@ -39,43 +74,43 @@ let healthBar = {
     borderWidth: 2
 };
 
+/** @type {UIElement} - Lives display UI element */
 let livesDisplay = {
     x: 20,
     y: 60,
     spacing: 25
 };
 
+/** @type {UIElement} - Level display UI element */
 let levelDisplay = {
     x: canvas.width - 100,
     y: 30
 };
 
+/** @type {UIElement} - Score display UI element */
 let scoreDisplay = {
     x: canvas.width - 100,
     y: 60
 };
 
-// Input handling
+/** @type {Object.<string, boolean>} - Keyboard input state */
 const keys = {};
 
-// Game initialization
+/**
+ * Initialize the game
+ * @function init
+ */
 function init() {
-    // Initialize sounds
     initSounds();
-
-    // Load assets
     loadAssets();
 
-    // Set up event listeners
     window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
 
-        // Toggle sound with M key
         if (e.code === 'KeyM') {
             toggleMute();
         }
 
-        // Quit game with Q key
         if (e.code === 'KeyQ') {
             quitGame();
         }
@@ -85,30 +120,28 @@ function init() {
         keys[e.code] = false;
     });
 
-    // Expose game state variables to window for access from HTML
     window.gameStarted = false;
     window.gameRunning = false;
 
-    // Create setter functions to properly update the game state
     window.startGame = function () {
         gameStarted = true;
         gameRunning = true;
     };
 
-    // Start game loop once assets are loaded
     checkAssetsLoaded();
 }
 
-// Asset loading
+/**
+ * Load game assets
+ * @function loadAssets
+ */
 function loadAssets() {
-    // Define assets to load
     const imagesToLoad = [
         // Add your assets here
     ];
 
     assets.total = imagesToLoad.length;
 
-    // Load each image
     imagesToLoad.forEach(img => {
         const image = new Image();
         image.src = img.src;
@@ -118,7 +151,6 @@ function loadAssets() {
         };
         image.onerror = () => {
             console.error(`Failed to load image: ${img.src}`);
-            // Use placeholder for failed loads
             const placeholder = new Image();
             placeholder.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
             assets.images[img.name] = placeholder;
@@ -127,27 +159,29 @@ function loadAssets() {
     });
 }
 
+/**
+ * Check if all assets are loaded
+ * @function checkAssetsLoaded
+ */
 function checkAssetsLoaded() {
     if (assets.loaded === assets.total) {
-        // All assets loaded, initialize game objects
         setupGame();
         document.getElementById('loading').style.display = 'none';
         gameLoaded = true;
-        // Start the game loop
         requestAnimationFrame(gameLoop);
     } else {
-        // Check again in a moment
         setTimeout(checkAssetsLoaded, 100);
     }
 }
 
-// Game setup
+/**
+ * Set up game objects
+ * @function setupGame
+ */
 function setupGame() {
-    // Create player
     player = new Player(100, 300);
     player.lives = INITIAL_LIVES;
 
-    // Create platforms
     // Ground
     platforms.push({
         x: 0,
@@ -156,7 +190,7 @@ function setupGame() {
         height: 30
     });
 
-    // Some platforms
+    // Platforms
     platforms.push({
         x: 200,
         y: 350,
@@ -178,100 +212,81 @@ function setupGame() {
         height: 20
     });
 
-    // Create enemies
     enemies.push(new Enemy(300, 418, 32, 32, 2));
 
-    // Create coins
     for (let i = 0; i < 5; i++) {
         coins.push(new Coin(150 + i * 120, 300));
     }
 }
 
-// Game loop
+/**
+ * Main game loop
+ * @function gameLoop
+ * @param {number} timestamp - Current timestamp
+ */
 function gameLoop(timestamp) {
     if (!gameLoaded) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!gameStarted) {
-        // Just render the static elements but don't update game state
         render();
     } else if (gameOver) {
         renderGameOver();
     } else {
-        // If game is started, it should be running
         gameRunning = true;
 
-        // Start background music if it's not playing
         if (sounds.backgroundMusic.paused) {
             playSound('backgroundMusic');
         }
 
-        // Update game objects
         update();
-
-        // Render game objects
         render();
-
-        // Check if level is complete
         checkLevelComplete();
     }
 
-    // Continue the game loop
     requestAnimationFrame(gameLoop);
 }
 
-// Update game state
+/**
+ * Update game state
+ * @function update
+ */
 function update() {
-    // Update player
     player.update(keys, canvas.width, canvas.height);
-
-    // Update enemies
     enemies.forEach(enemy => enemy.update(canvas.width));
-
-    // Update coins
     coins.forEach(coin => coin.update());
-
-    // Check collisions
     checkCollisions();
 }
 
-// Check collisions
+/**
+ * Check for collisions between game objects
+ * @function checkCollisions
+ */
 function checkCollisions() {
-    // Player-Platform collisions
     let onGround = false;
 
     platforms.forEach(platform => {
-        // Get the overlap between player and platform
         const overlapX = Math.min(player.x + player.width, platform.x + platform.width) -
             Math.max(player.x, platform.x);
         const overlapY = Math.min(player.y + player.height, platform.y + platform.height) -
             Math.max(player.y, platform.y);
 
-        // Check if there's an actual collision
         if (overlapX > 0 && overlapY > 0) {
-            // Determine which side of the collision is smaller (to resolve that way)
             if (overlapX < overlapY) {
-                // Horizontal collision
                 if (player.x < platform.x) {
-                    // Collision from left
                     player.x = platform.x - player.width;
                 } else {
-                    // Collision from right
                     player.x = platform.x + platform.width;
                 }
                 player.velocityX = 0;
             } else {
-                // Vertical collision
                 if (player.y < platform.y) {
-                    // Collision from above (landing)
                     player.y = platform.y - player.height;
                     player.velocityY = 0;
                     player.isJumping = false;
                     onGround = true;
                 } else {
-                    // Collision from below (hitting head)
                     player.y = platform.y + platform.height;
                     player.velocityY = 0;
                 }
@@ -283,25 +298,17 @@ function checkCollisions() {
         player.isJumping = true;
     }
 
-    // Player-Enemy collisions
     enemies.forEach((enemy, index) => {
         if (player.x + player.width > enemy.x &&
             player.x < enemy.x + enemy.width &&
             player.y + player.height > enemy.y &&
             player.y < enemy.y + enemy.height) {
 
-            // Check if player is jumping on enemy
             if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
-                // Remove enemy
                 enemies.splice(index, 1);
-
-                // Bounce player
                 player.velocityY = JUMP_FORCE / 1.5;
-
-                // Add score for defeating enemy
                 score += 20;
             } else if (!player.invulnerable) {
-                // Player gets hit
                 const healthDepleted = player.takeDamage(ENEMY_DAMAGE);
                 if (healthDepleted) {
                     player.lives--;
@@ -316,7 +323,6 @@ function checkCollisions() {
         }
     });
 
-    // Player-Coin collisions
     coins.forEach(coin => {
         if (!coin.collected &&
             player.x + player.width > coin.x &&
@@ -331,35 +337,32 @@ function checkCollisions() {
     });
 }
 
-// Render game objects
+/**
+ * Render game objects
+ * @function render
+ */
 function render() {
-    // Draw background
     ctx.fillStyle = '#5c94fc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw platforms
     ctx.fillStyle = '#8b4513';
     platforms.forEach(platform => {
         ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
     });
 
-    // Draw coins
     coins.forEach(coin => coin.render(ctx));
-
-    // Draw enemies
     enemies.forEach(enemy => enemy.render(ctx));
-
-    // Draw player
     player.render(ctx);
 
-    // Render UI elements
     renderUI();
 }
 
-// Render UI elements
+/**
+ * Render UI elements
+ * @function renderUI
+ */
 function renderUI() {
-    // Health bar
-    // Border
+    // Health bar border
     ctx.fillStyle = '#000';
     ctx.fillRect(
         healthBar.x - healthBar.borderWidth,
@@ -368,7 +371,7 @@ function renderUI() {
         healthBar.height + healthBar.borderWidth * 2
     );
 
-    // Background
+    // Health bar background
     ctx.fillStyle = '#fff';
     ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
 
@@ -398,7 +401,10 @@ function renderUI() {
     ctx.fillText(`Score: ${score}`, scoreDisplay.x, scoreDisplay.y);
 }
 
-// Render game over screen
+/**
+ * Render game over screen
+ * @function renderGameOver
+ */
 function renderGameOver() {
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -414,16 +420,17 @@ function renderGameOver() {
     ctx.font = '18px Arial';
     ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
 
-    // Reset text alignment
     ctx.textAlign = 'left';
 
-    // Check for restart
     if (keys['KeyR']) {
         restartGame();
     }
 }
 
-// Check if level is complete
+/**
+ * Check if level is complete
+ * @function checkLevelComplete
+ */
 function checkLevelComplete() {
     const allCoinsCollected = coins.every(coin => coin.collected);
 
@@ -434,12 +441,13 @@ function checkLevelComplete() {
     }
 }
 
-// Load next level
+/**
+ * Load next level
+ * @function loadNextLevel
+ */
 function loadNextLevel() {
-    // Reset player position
     player.reset(100, 300);
 
-    // Clear existing game objects
     platforms = [];
     enemies = [];
     coins = [];
@@ -476,20 +484,18 @@ function loadNextLevel() {
         ));
     }
 
-    // Add coins based on level, ensuring they don't overlap with platforms
+    // Add coins based on level
     const coinCount = 5 + currentLevel;
     for (let i = 0; i < coinCount; i++) {
         let validPosition = false;
         let coinX, coinY;
 
-        // Try to find a valid position that doesn't overlap with platforms
         let attempts = 0;
         while (!validPosition && attempts < 50) {
             coinX = Math.random() * (canvas.width - 50);
             coinY = 100 + Math.random() * 300;
             validPosition = true;
 
-            // Check if this position overlaps with any platform
             for (const platform of platforms) {
                 if (coinX + 16 > platform.x &&
                     coinX < platform.x + platform.width &&
@@ -502,7 +508,6 @@ function loadNextLevel() {
             attempts++;
         }
 
-        // Add the coin at the valid position or at a default position if no valid one was found
         coins.push(new Coin(
             validPosition ? coinX : 50 + i * 50,
             validPosition ? coinY : 100
@@ -510,34 +515,31 @@ function loadNextLevel() {
     }
 }
 
-// Restart game
+/**
+ * Restart the game
+ * @function restartGame
+ */
 function restartGame() {
     gameOver = false;
     currentLevel = 1;
     score = 0;
-
-    // Reset game objects
     setupGame();
 }
 
-// Quit game function
+/**
+ * Quit the game
+ * @function quitGame
+ */
 function quitGame() {
     if (gameStarted && !gameOver) {
-        // Stop all sounds
         stopSound('backgroundMusic');
 
-        // Show confirmation dialog
         if (confirm('Are you sure you want to quit the game?')) {
-            // Reset game state
             gameStarted = false;
             gameRunning = false;
-
-            // Show main menu or other appropriate UI
             document.getElementById('startScreen').style.display = 'block';
-
             console.log('Game quit by user');
         } else {
-            // Resume game if user cancels
             if (!sounds.backgroundMusic.paused) {
                 playSound('backgroundMusic');
             }

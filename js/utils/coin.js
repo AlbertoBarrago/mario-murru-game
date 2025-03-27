@@ -1,4 +1,13 @@
+/**
+ * Represents a coin in the game
+ * @class
+ */
 export default class Coin {
+    /**
+     * Creates a new coin instance
+     * @param {number} x - The x-coordinate of the coin
+     * @param {number} y - The y-coordinate of the coin
+     */
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -11,9 +20,11 @@ export default class Coin {
         this.collected = false;
     }
 
+    /**
+     * Updates the coin's animation state
+     */
     update() {
         if (!this.collected) {
-            // Animation
             this.frameTimer++;
             if (this.frameTimer > this.frameDelay) {
                 this.frame = (this.frame + 1) % this.frameCount;
@@ -22,6 +33,10 @@ export default class Coin {
         }
     }
 
+    /**
+     * Renders the coin on the canvas
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+     */
     render(ctx) {
         if (!this.collected) {
             ctx.fillStyle = '#ffd700';

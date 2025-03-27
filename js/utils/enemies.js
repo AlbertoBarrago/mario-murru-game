@@ -1,4 +1,15 @@
+/**
+ * Represents an enemy character in the game
+ */
 export default class Enemy {
+    /**
+     * Creates a new Enemy instance
+     * @param {number} x - The initial x coordinate
+     * @param {number} y - The initial y coordinate
+     * @param {number} width - The width of the enemy
+     * @param {number} height - The height of the enemy
+     * @param {number} velocityX - The horizontal velocity
+     */
     constructor(x, y, width, height, velocityX) {
         this.x = x;
         this.y = y;
@@ -12,17 +23,18 @@ export default class Enemy {
         this.frameTimer = 0;
     }
 
+    /**
+     * Updates the enemy's position and animation state
+     * @param {number} canvasWidth - The width of the game canvas
+     */
     update(canvasWidth) {
-        // Move enemy
         this.x += this.velocityX;
 
-        // Boundary checks and direction change
         if (this.x <= 0 || this.x + this.width >= canvasWidth) {
             this.velocityX *= -1;
             this.direction = this.velocityX > 0 ? 'right' : 'left';
         }
 
-        // Animation
         this.frameTimer++;
         if (this.frameTimer > this.frameDelay) {
             this.frame = (this.frame + 1) % this.frameCount;
@@ -30,16 +42,18 @@ export default class Enemy {
         }
     }
 
+    /**
+     * Renders the enemy on the canvas
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+     */
     render(ctx) {
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        // Add eyes to make it look like an enemy
         ctx.fillStyle = '#fff';
         ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
         ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
 
-        // Add angry eyebrows
         ctx.strokeStyle = '#000';
         ctx.lineWidth = 2;
         ctx.beginPath();

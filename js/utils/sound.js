@@ -1,6 +1,4 @@
-// Sound module for Mario Murru game
-
-// Sound assets
+/** @type {Object.<string, HTMLAudioElement>} */
 const sounds = {
     jump: new Audio('assets/sounds/jump.wav'),
     coin: new Audio('assets/sounds/coin.wav'),
@@ -10,20 +8,18 @@ const sounds = {
     backgroundMusic: new Audio('assets/sounds/background.mp3')
 };
 
-// Configure background music
 sounds.backgroundMusic.loop = true;
 sounds.backgroundMusic.volume = 0.5;
 
-// Play sound function
+/**
+ * Plays a sound by its name
+ * @param {string} soundName - The name of the sound to play
+ */
 function playSound(soundName) {
-    // Check if sound exists
     if (sounds[soundName]) {
-        // Reset the sound to the beginning if it's already playing
         sounds[soundName].currentTime = 0;
-        // Play the sound
         const playPromise = sounds[soundName].play();
 
-        // Handle play promise to catch autoplay restrictions
         if (playPromise !== undefined) {
             playPromise.catch(error => {
                 console.error(`Error playing sound ${soundName}:`, error);
@@ -35,7 +31,10 @@ function playSound(soundName) {
     }
 }
 
-// Stop sound function
+/**
+ * Stops a sound by its name
+ * @param {string} soundName - The name of the sound to stop
+ */
 function stopSound(soundName) {
     if (sounds[soundName]) {
         sounds[soundName].pause();
@@ -43,31 +42,30 @@ function stopSound(soundName) {
     }
 }
 
-// Toggle mute all sounds
+/** @type {boolean} */
 let muted = false;
 
+/**
+ * Toggles mute state for all sounds
+ * @returns {boolean} The new mute state
+ */
 function toggleMute() {
     muted = !muted;
-
-    // Apply mute setting to all sounds
     Object.values(sounds).forEach(sound => {
         sound.muted = muted;
     });
-
     return muted;
 }
 
-// Initialize sounds
+/**
+ * Initializes all sounds and sets up event listeners
+ */
 function initSounds() {
-    // Preload all sounds
     Object.values(sounds).forEach(sound => {
         sound.load();
-
-        // Add event listeners to handle autoplay restrictions
         sound.addEventListener('play', () => {
             console.log(`Playing sound: ${Object.keys(sounds).find(key => sounds[key] === sound)}`);
         });
-
         sound.addEventListener('error', (e) => {
             console.error(`Error with sound: ${Object.keys(sounds).find(key => sounds[key] === sound)}`, e);
         });
