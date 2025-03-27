@@ -1,11 +1,11 @@
 {
     "name": "mario-murru-game",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A Mario-style platformed game featuring Mario Murru",
     "main": "index.html",
     "type": "module",
     "engines": {
-        "node": ">=16.0.0"
+        "node": ">=20.0.0"
     },
     "scripts": {
         "start": "webpack serve --mode development",
