@@ -57,12 +57,6 @@ To modify or extend the game:
 To run tests:
 1. Run `npm test`
 
-## Test Coverage
-![Coverage Branches](./coverage/badge-branches.svg)
-![Coverage Functions](./coverage/badge-functions.svg)
-![Coverage Lines](./coverage/badge-lines.svg)
-![Coverage Statements](./coverage/badge-statements.svg)
-
 ## Eslint
 To run eslint:
 1. Run `npm run lint`
