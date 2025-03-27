@@ -1,6 +1,9 @@
-// Import sound module
-import { sounds, playSound, stopSound, toggleMute, initSounds } from './sound.js';
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH, INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE } from './constants.js';
+// Import modules
+import { sounds, playSound, stopSound, toggleMute, initSounds } from './utils/sound.js';
+import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants.js';
+import Player from './utils/player.js';
+import Enemy from './utils/enemies.js';
+import Coin from './utils/coin.js';
 
 // Game state
 let gameLoaded = false;
@@ -98,10 +101,9 @@ function init() {
 
 // Asset loading
 function loadAssets() {
-    // Define assets to load - removing spritesheet
+    // Define assets to load
     const imagesToLoad = [
-        // Only load necessary assets
-        // ADD sprites here...
+        // Add your assets here
     ];
 
     assets.total = imagesToLoad.length;
@@ -141,27 +143,9 @@ function checkAssetsLoaded() {
 
 // Game setup
 function setupGame() {
-    // Create player - removing sprite information
-    player = {
-        x: 100,
-        y: 300,
-        width: 32,
-        height: 32,
-        velocityX: 0,
-        velocityY: 0,
-        isJumping: false,
-        direction: 'right',
-        frame: 0,
-        frameCount: 3,
-        frameDelay: 5,
-        frameTimer: 0,
-        health: MAX_HEALTH,
-        lives: INITIAL_LIVES,
-        invulnerable: false,
-        invulnerableTimer: 0,
-        invulnerableDuration: 60,
-        characterType: 'pepe' // 'human' or 'pepe'
-    };
+    // Create player
+    player = new Player(100, 300);
+    player.lives = INITIAL_LIVES;
 
     // Create platforms
     // Ground
@@ -194,33 +178,12 @@ function setupGame() {
         height: 20
     });
 
-    // Create enemies - removing sprite information
-    enemies.push({
-        x: 300,
-        y: 418,
-        width: 32,
-        height: 32,
-        velocityX: 2,
-        direction: 'right',
-        frame: 0,
-        frameCount: 2,
-        frameDelay: 10,
-        frameTimer: 0
-    });
+    // Create enemies
+    enemies.push(new Enemy(300, 418, 32, 32, 2));
 
     // Create coins
     for (let i = 0; i < 5; i++) {
-        coins.push({
-            x: 150 + i * 120,
-            y: 300,
-            width: 16,
-            height: 16,
-            frame: 0,
-            frameCount: 4,
-            frameDelay: 8,
-            frameTimer: 0,
-            collected: false
-        });
+        coins.push(new Coin(150 + i * 120, 300));
     }
 }
 
@@ -262,114 +225,16 @@ function gameLoop(timestamp) {
 // Update game state
 function update() {
     // Update player
-    updatePlayer();
+    player.update(keys, canvas.width, canvas.height);
 
     // Update enemies
-    updateEnemies();
+    enemies.forEach(enemy => enemy.update(canvas.width));
 
     // Update coins
-    updateCoins();
+    coins.forEach(coin => coin.update());
 
     // Check collisions
     checkCollisions();
-
-    // Update player invulnerability
-    if (player.invulnerable) {
-        player.invulnerableTimer++;
-        if (player.invulnerableTimer >= player.invulnerableDuration) {
-            player.invulnerable = false;
-            player.invulnerableTimer = 0;
-        }
-    }
-}
-
-// Update player
-function updatePlayer() {
-    // Handle input
-    if (keys['ArrowLeft'] || keys['KeyA']) {
-        player.velocityX = -MOVEMENT_SPEED;
-        player.direction = 'left';
-        player.frameTimer++;
-    } else if (keys['ArrowRight'] || keys['KeyD']) {
-        player.velocityX = MOVEMENT_SPEED;
-        player.direction = 'right';
-        player.frameTimer++;
-    } else {
-        player.velocityX *= FRICTION;
-        player.frameTimer = 0;
-        player.frame = 0;
-    }
-
-    // Handle jumping
-    if ((keys['ArrowUp'] || keys['KeyW'] || keys['Space']) && !player.isJumping) {
-        player.velocityY = JUMP_FORCE;
-        player.isJumping = true;
-        playSound('jump');
-    }
-
-    // Apply gravity
-    player.velocityY += GRAVITY;
-
-    // Limit falling speed to prevent tunneling through platforms
-    if (player.velocityY > 15) {
-        player.velocityY = 15;
-    }
-
-    // Update position
-    player.x += player.velocityX;
-    player.y += player.velocityY;
-
-    // Boundary checks
-    if (player.x < 0) player.x = 0;
-    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-
-    // Add bottom boundary check to prevent falling through the canvas
-    if (player.y + player.height > canvas.height) {
-        player.y = canvas.height - player.height;
-        player.velocityY = 0;
-        player.isJumping = false;
-    }
-
-    // Animation
-    if (player.frameTimer > player.frameDelay) {
-        player.frame = (player.frame + 1) % player.frameCount;
-        player.frameTimer = 0;
-    }
-}
-
-// Update enemies
-function updateEnemies() {
-    enemies.forEach(enemy => {
-        // Move enemy
-        enemy.x += enemy.velocityX;
-
-        // Boundary checks and direction change
-        if (enemy.x <= 0 || enemy.x + enemy.width >= canvas.width) {
-            enemy.velocityX *= -1;
-            enemy.direction = enemy.velocityX > 0 ? 'right' : 'left';
-        }
-
-        // Animation
-        enemy.frameTimer++;
-        if (enemy.frameTimer > enemy.frameDelay) {
-            enemy.frame = (enemy.frame + 1) % enemy.frameCount;
-            enemy.frameTimer = 0;
-        }
-    });
-}
-
-// Update coins
-function updateCoins() {
-    coins.forEach(coin => {
-        if (!coin.collected) {
-            // Animation
-            coin.frameTimer++;
-            if (coin.frameTimer > coin.frameDelay) {
-                coin.frame = (coin.frame + 1) % coin.frameCount;
-                coin.frameTimer = 0;
-            }
-        }
-    });
 }
 
 // Check collisions
@@ -419,7 +284,7 @@ function checkCollisions() {
     }
 
     // Player-Enemy collisions
-    enemies.forEach(enemy => {
+    enemies.forEach((enemy, index) => {
         if (player.x + player.width > enemy.x &&
             player.x < enemy.x + enemy.width &&
             player.y + player.height > enemy.y &&
@@ -427,11 +292,8 @@ function checkCollisions() {
 
             // Check if player is jumping on enemy
             if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
-                // Remove enemy (or implement proper enemy defeat logic)
-                const index = enemies.indexOf(enemy);
-                if (index > -1) {
-                    enemies.splice(index, 1);
-                }
+                // Remove enemy
+                enemies.splice(index, 1);
 
                 // Bounce player
                 player.velocityY = JUMP_FORCE / 1.5;
@@ -440,7 +302,16 @@ function checkCollisions() {
                 score += 20;
             } else if (!player.invulnerable) {
                 // Player gets hit
-                playerTakeDamage(ENEMY_DAMAGE);
+                const healthDepleted = player.takeDamage(ENEMY_DAMAGE);
+                if (healthDepleted) {
+                    player.lives--;
+                    if (player.lives <= 0) {
+                        gameOver = true;
+                        playSound('gameOver');
+                    } else {
+                        player.reset(100, 300);
+                    }
+                }
             }
         }
     });
@@ -460,33 +331,6 @@ function checkCollisions() {
     });
 }
 
-// Player takes damage
-function playerTakeDamage(damage) {
-    player.health -= damage;
-    player.invulnerable = true;
-    player.invulnerableTimer = 0;
-    playSound('damage');
-
-    if (player.health <= 0) {
-        player.lives--;
-        if (player.lives <= 0) {
-            gameOver = true;
-            playSound('gameOver');
-        } else {
-            resetPlayer();
-        }
-    }
-}
-
-// Reset player after getting hit
-function resetPlayer() {
-    player.x = 100;
-    player.y = 300;
-    player.velocityX = 0;
-    player.velocityY = 0;
-    player.health = MAX_HEALTH;
-}
-
 // Render game objects
 function render() {
     // Draw background
@@ -500,76 +344,13 @@ function render() {
     });
 
     // Draw coins
-    ctx.fillStyle = '#ffd700';
-    coins.forEach(coin => {
-        if (!coin.collected) {
-            ctx.beginPath();
-            ctx.arc(coin.x + coin.width / 2, coin.y + coin.height / 2, coin.width / 2, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    });
+    coins.forEach(coin => coin.render(ctx));
 
-    // Draw enemies - back to simple drawing
-    ctx.fillStyle = '#ff0000';
-    enemies.forEach(enemy => {
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    // Draw enemies
+    enemies.forEach(enemy => enemy.render(ctx));
 
-        // Add eyes to make it look like an enemy
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(enemy.x + 8, enemy.y + 8, 4, 4);
-        ctx.fillRect(enemy.x + 20, enemy.y + 8, 4, 4);
-
-        // Add angry eyebrows
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(enemy.x + 6, enemy.y + 6);
-        ctx.lineTo(enemy.x + 12, enemy.y + 10);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(enemy.x + 26, enemy.y + 6);
-        ctx.lineTo(enemy.x + 20, enemy.y + 10);
-        ctx.stroke();
-    });
-
-    // Draw player - back to simple drawing
-    if (player.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
-        // Blinking effect when invulnerable
-        ctx.globalAlpha = 0.5;
-    }
-
-    if (player.characterType === 'pepe') {
-        // Draw Pepe-style character
-        ctx.fillStyle = '#77b255'; // Pepe green
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-
-        // Draw Pepe face details
-        ctx.fillStyle = '#000';
-        // Eyes
-        ctx.fillRect(player.x + 8, player.y + 8, 4, 4);
-        ctx.fillRect(player.x + 20, player.y + 8, 4, 4);
-        // Mouth
-        ctx.beginPath();
-        ctx.arc(player.x + 16, player.y + 20, 8, 0, Math.PI, false);
-        ctx.stroke();
-    } else {
-        // Draw human-like character
-        ctx.fillStyle = '#FFC0CB'; // Pink skin tone
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-
-        // Draw face
-        ctx.fillStyle = '#000';
-        // Eyes
-        ctx.fillRect(player.x + 8, player.y + 8, 4, 4);
-        ctx.fillRect(player.x + 20, player.y + 8, 4, 4);
-        // Mouth
-        ctx.beginPath();
-        ctx.arc(player.x + 16, player.y + 20, 5, 0, Math.PI, false);
-        ctx.stroke();
-    }
-
-    ctx.globalAlpha = 1.0;
+    // Draw player
+    player.render(ctx);
 
     // Render UI elements
     renderUI();
@@ -592,14 +373,14 @@ function renderUI() {
     ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
 
     // Health amount
-    const healthWidth = (player.health / MAX_HEALTH) * healthBar.width;
+    const healthWidth = (player.health / 100) * healthBar.width;
     ctx.fillStyle = player.health > 30 ? '#0f0' : '#f00';
     ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
 
     // Health text
     ctx.fillStyle = '#000';
     ctx.font = '12px Arial';
-    ctx.fillText(`HP: ${player.health}/${MAX_HEALTH}`, healthBar.x + 5, healthBar.y + 12);
+    ctx.fillText(`HP: ${player.health}/100`, healthBar.x + 5, healthBar.y + 12);
 
     // Lives
     ctx.fillStyle = '#f00';
@@ -656,10 +437,7 @@ function checkLevelComplete() {
 // Load next level
 function loadNextLevel() {
     // Reset player position
-    player.x = 100;
-    player.y = 300;
-    player.velocityX = 0;
-    player.velocityY = 0;
+    player.reset(100, 300);
 
     // Clear existing game objects
     platforms = [];
@@ -688,18 +466,14 @@ function loadNextLevel() {
     // Add more enemies based on level
     const enemyCount = currentLevel;
     for (let i = 0; i < enemyCount; i++) {
-        enemies.push({
-            x: 100 + Math.random() * (canvas.width - 200),
-            y: 418,
-            width: 32,
-            height: 32,
-            velocityX: 1 + Math.random() * currentLevel,
-            direction: Math.random() > 0.5 ? 'right' : 'left',
-            frame: 0,
-            frameCount: 2,
-            frameDelay: 10,
-            frameTimer: 0
-        });
+        const speed = 1 + Math.random() * currentLevel;
+        enemies.push(new Enemy(
+            100 + Math.random() * (canvas.width - 200),
+            418,
+            32,
+            32,
+            speed
+        ));
     }
 
     // Add coins based on level, ensuring they don't overlap with platforms
@@ -729,17 +503,10 @@ function loadNextLevel() {
         }
 
         // Add the coin at the valid position or at a default position if no valid one was found
-        coins.push({
-            x: validPosition ? coinX : 50 + i * 50,
-            y: validPosition ? coinY : 100,
-            width: 16,
-            height: 16,
-            frame: 0,
-            frameCount: 4,
-            frameDelay: 8,
-            frameTimer: 0,
-            collected: false
-        });
+        coins.push(new Coin(
+            validPosition ? coinX : 50 + i * 50,
+            validPosition ? coinY : 100
+        ));
     }
 }
 
@@ -748,8 +515,6 @@ function restartGame() {
     gameOver = false;
     currentLevel = 1;
     score = 0;
-    player.lives = INITIAL_LIVES;
-    player.health = MAX_HEALTH;
 
     // Reset game objects
     setupGame();
