@@ -7,7 +7,7 @@ const sounds = {
     damage: new Audio('assets/sounds/damage.wav'),
     gameOver: new Audio('assets/sounds/game-over.wav'),
     levelComplete: new Audio('assets/sounds/level-complete.wav'),
-    backgroundMusic: new Audio('assets/sounds/background-music.mp3')
+    backgroundMusic: new Audio('assets/sounds/background.mp3')
 };
 
 // Configure background music
