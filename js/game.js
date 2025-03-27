@@ -1,10 +1,11 @@
 // Import modules
-import { sounds, playSound, stopSound, toggleMute, initSounds } from './utils/sound.js';
+import '../css/style.css';
+import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/sound.js';
 import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants.js';
-import Player from './utils/player.js';
-import Enemy from './utils/enemies.js';
-import Coin from './utils/coin.js';
-import ParticleSystem from './utils/particles.js';
+import Player from './core/player.js';
+import Enemy from './core/enemies.js';
+import Coin from './core/coin.js';
+import ParticleSystem from './core/particles.js';
 
 /**
  * @typedef {Object} GameState

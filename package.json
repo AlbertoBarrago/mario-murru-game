@@ -5,9 +5,10 @@
     "main": "index.html",
     "scripts": {
         "start": "npx http-server -o",
+        "dev": "webpack serve --mode development",
         "lint": "eslint js/",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "mkdir -p dist && cp -R index.html css js assets dist/"
+        "build": "webpack --mode production"
     },
     "repository": {
         "type": "git",
@@ -26,7 +27,17 @@
     },
     "homepage": "https://github.com/username/mario-murru#readme",
     "devDependencies": {
+        "@babel/core": "^7.22.5",
+        "@babel/preset-env": "^7.22.5",
+        "babel-loader": "^9.1.2",
+        "copy-webpack-plugin": "^11.0.0",
+        "css-loader": "^6.8.1",
         "eslint": "^8.42.0",
-        "http-server": "^14.1.1"
+        "html-webpack-plugin": "^5.5.3",
+        "http-server": "^14.1.1",
+        "mini-css-extract-plugin": "^2.7.6",
+        "webpack": "^5.88.0",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.1"
     }
 }

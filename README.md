@@ -43,9 +43,19 @@ This game uses free assets from various sources. All game assets are used under 
 
 To modify or extend the game:
 
-1. Edit `js/game.js` to change game mechanics
-2. Replace placeholder images in `assets/images/` with your own sprites
-3. Modify `index.html` to change the layout or styling
+1. Clone the repository
+2. Run `npm install` to install dependencies
+3. Run `npm run dev` to start the development server
+4. Edit `js/game.js` to change game mechanics
+5. Replace placeholder images in `assets/images/` with your own sprites
+6. Modify `index.html` to change the layout or styling
+
+## Building for Production
+
+To create an optimized production build:
+
+1. Run `npm run build`
+2. The optimized files will be generated in the `dist` folder
 
 ## License
 
