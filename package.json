@@ -4,7 +4,7 @@
     "description": "A Mario-style platformer game featuring Mario Murru",
     "main": "index.html",
     "scripts": {
-        "start": "npx http-server -o",
+        "start": "webpack serve --mode development",
         "dev": "webpack serve --mode development",
         "lint": "eslint js/",
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -23,9 +23,9 @@
     "author": "Mario Murru",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/username/mario-murru/issues"
+        "url": "https://github.com/albertobarrago/mario-murru/issues"
     },
-    "homepage": "https://github.com/username/mario-murru#readme",
+    "homepage": "https://github.com/albertobarrago/mario-murru#readme",
     "devDependencies": {
         "@babel/core": "^7.22.5",
         "@babel/preset-env": "^7.22.5",
