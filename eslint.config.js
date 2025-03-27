@@ -20,7 +20,16 @@ import eslint from 'eslint';
           sessionStorage: 'readonly',
           fetch: 'readonly',
           alert: 'readonly',
-          confirm: 'readonly'
+          confirm: 'readonly',
+          jest: 'readonly',
+          describe: 'readonly',
+          it: 'readonly',
+          test: 'readonly',
+          expect: 'readonly',
+          beforeEach: 'readonly',
+          afterEach: 'readonly',
+          beforeAll: 'readonly',
+          afterAll: 'readonly'
         }
       },
       linterOptions: {

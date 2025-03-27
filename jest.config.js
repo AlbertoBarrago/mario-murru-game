@@ -1,11 +1,16 @@
-module.exports = {
-    testEnvironment: 'jsdom',
-    transform: {
-        '^.+\\.js$': 'babel-jest',
-    },
+export default {
+    // Use ES modules
+    transform: {},
     moduleNameMapper: {
-        '\\.(css|less|scss|sass)$': '<rootDir>/tests/mocks/styleMock.js',
-        '\\.(jpg|jpeg|png|gif|webp|svg|mp3|wav)$': '<rootDir>/tests/mocks/fileMock.js'
+        '^(\\.{1,2}/.*)\\.js': '$1',
     },
-    testPathIgnorePatterns: ['/node_modules/']
+    // Test environment
+    testEnvironment: 'jsdom',
+    // Test files pattern
+    testMatch: ['**/tests/**/*.test.js'],
+    // Coverage reporting
+    collectCoverage: true,
+    coverageDirectory: 'coverage',
+    // Other options
+    verbose: true
 };

@@ -1,14 +1,5 @@
 import Player from '../js/core/source/player.js';
 
-// Mock the sound module to avoid actual sound playback during tests
-jest.mock('../js/core/source/sound.js', () => ({
-    playSound: jest.fn(),
-    stopSound: jest.fn(),
-    toggleMute: jest.fn(),
-    initSounds: jest.fn(),
-    sounds: {}
-}));
-
 describe('Player', () => {
     let player;
     const canvasWidth = 800;
