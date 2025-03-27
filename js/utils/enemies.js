@@ -47,23 +47,44 @@ export default class Enemy {
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
      */
     render(ctx) {
-        ctx.fillStyle = '#ff0000';
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        // Determine which enemy type to use (we'll use the first type for now)
+        // In a more advanced implementation, this could be a property of the enemy
+        const enemyType = 0; // 0 = Goomba, 1 = Koopa, 2 = Ghost
 
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-        ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+        // Calculate which frame to use based on animation state
+        // Each enemy type has 2 frames (idle and walking)
+        const frameOffset = enemyType * 2; // 2 frames per enemy type
+        const frameIndex = frameOffset + this.frame;
 
-        ctx.strokeStyle = '#000';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(this.x + 6, this.y + 6);
-        ctx.lineTo(this.x + 12, this.y + 10);
-        ctx.stroke();
+        // Calculate the source position in the sprite sheet
+        const sourceX = frameIndex * 32; // Each frame is 32px wide
+        const sourceY = 0;
 
-        ctx.beginPath();
-        ctx.moveTo(this.x + 26, this.y + 6);
-        ctx.lineTo(this.x + 20, this.y + 10);
-        ctx.stroke();
+        // Draw the sprite
+        try {
+            const img = new Image();
+            img.src = 'assets/images/sprites/enemies.svg';
+            ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
+        } catch (e) {
+            // Fallback to colored rectangles if image fails to load
+            ctx.fillStyle = '#ff0000';
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+            ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(this.x + 6, this.y + 6);
+            ctx.lineTo(this.x + 12, this.y + 10);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(this.x + 26, this.y + 6);
+            ctx.lineTo(this.x + 20, this.y + 10);
+            ctx.stroke();
+        }
     }
 }

@@ -4,6 +4,7 @@ import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants
 import Player from './utils/player.js';
 import Enemy from './utils/enemies.js';
 import Coin from './utils/coin.js';
+import ParticleSystem from './utils/particles.js';
 
 /**
  * @typedef {Object} GameState
@@ -49,6 +50,8 @@ let platforms = [];
 let enemies = [];
 /** @type {Array<Coin>} - Array of coin objects */
 let coins = [];
+/** @type {ParticleSystem} - Particle system for visual effects */
+let particleSystem;
 
 /** @type {HTMLCanvasElement} - Game canvas */
 const canvas = document.getElementById('gameCanvas');
@@ -181,6 +184,7 @@ function checkAssetsLoaded() {
 function setupGame() {
     player = new Player(100, 300);
     player.lives = INITIAL_LIVES;
+    particleSystem = new ParticleSystem();
 
     // Ground
     platforms.push({
@@ -256,6 +260,7 @@ function update() {
     player.update(keys, canvas.width, canvas.height);
     enemies.forEach(enemy => enemy.update(canvas.width));
     coins.forEach(coin => coin.update());
+    particleSystem.update();
     checkCollisions();
 }
 
@@ -305,9 +310,24 @@ function checkCollisions() {
             player.y < enemy.y + enemy.height) {
 
             if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
+                // Create explosion effect at enemy position
+                particleSystem.createExplosion(
+                    enemy.x + enemy.width / 2,
+                    enemy.y + enemy.height / 2,
+                    30,
+                    ['#ff0000', '#ff7700', '#ffff00', '#ff00ff']
+                );
+
+                // Create score popup
+                particleSystem.createScorePopup(enemy.x + enemy.width / 2, enemy.y, 20);
+
+                // Remove enemy
                 enemies.splice(index, 1);
                 player.velocityY = JUMP_FORCE / 1.5;
                 score += 20;
+
+                // Play sound effect
+                playSound('damage');
             } else if (!player.invulnerable) {
                 const healthDepleted = player.takeDamage(ENEMY_DAMAGE);
                 if (healthDepleted) {
@@ -353,6 +373,7 @@ function render() {
     coins.forEach(coin => coin.render(ctx));
     enemies.forEach(enemy => enemy.render(ctx));
     player.render(ctx);
+    particleSystem.render(ctx);
 
     renderUI();
 }

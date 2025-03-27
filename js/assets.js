@@ -24,7 +24,10 @@ function loadAssets() {
         { name: 'tiles', src: 'assets/images/tiles.png' },
         { name: 'enemies', src: 'assets/images/enemies.png' },
         { name: 'coin', src: 'assets/images/coin.png' },
-        { name: 'background', src: 'assets/images/background.png' }
+        { name: 'background', src: 'assets/images/background.png' },
+        { name: 'mario', src: 'assets/images/sprites/mario.svg' },
+        { name: 'pepe', src: 'assets/images/sprites/pepe.svg' },
+        { name: 'enemies_sprite', src: 'assets/images/sprites/enemies.svg' }
     ];
 
     assets.total = imagesToLoad.length;
