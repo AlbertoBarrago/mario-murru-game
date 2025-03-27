@@ -3,7 +3,6 @@
     "version": "1.0.4",
     "description": "A Mario-style platformed game featuring Mario Murru",
     "main": "index.html",
-    "type": "module",
     "engines": {
         "node": ">=20.0.0"
     },
@@ -12,7 +11,7 @@
         "dev": "webpack serve --mode development",
         "lint": "eslint js/",
         "lint:fix": "eslint js/ --fix",
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test": "jest",
         "build": "webpack --mode production"
     },
     "repository": {
@@ -32,9 +31,10 @@
     },
     "homepage": "https://github.com/albertobarrago/mario-murru#readme",
     "devDependencies": {
-        "@babel/core": "^7.22.5",
-        "@babel/preset-env": "^7.22.5",
+        "@babel/core": "^7.26.10",
+        "@babel/preset-env": "^7.26.9",
         "@types/jest": "^29.5.14",
+        "babel-jest": "^29.7.0",
         "babel-loader": "^9.1.2",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.8.1",

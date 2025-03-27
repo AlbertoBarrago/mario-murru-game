@@ -2,6 +2,9 @@
 
 A simple 2D platformer game inspired by classic Mario Bros games, featuring a character named Mario Murru.
 
+[![Tests](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/tests.yml/badge.svg)](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/tests.yml)
+[![ESLint](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/eslint.yml/badge.svg)](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/eslint.yml)
+[![Coverage](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/coverage.yml/badge.svg)](https://github.com/AlbertoBarrago/mario-murru-game/actions/workflows/coverage.yml)
 ## Game Description
 
 Mario Murru is a 2D platformer where you control the hero, Mario Murru, as he jumps on platforms, collects coins, and defeats enemies. The game features simple physics, collision detection, and sprite animations.
