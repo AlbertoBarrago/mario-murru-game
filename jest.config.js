@@ -13,6 +13,7 @@ export default {
     // Coverage reporting
     collectCoverage: true,
     coverageDirectory: 'coverage',
+    coverageReporters: ['json', 'lcov', 'text', 'clover', 'json-summary'],
     // Other options
     verbose: true
 };
