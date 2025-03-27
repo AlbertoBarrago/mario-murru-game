@@ -81,7 +81,12 @@ function init() {
 
         // Toggle sound with M key
         if (e.code === 'KeyM') {
-            toggleSound();
+            toggleMute();
+        }
+
+        // Quit game with Q key
+        if (e.code === 'KeyQ') {
+            quitGame();
         }
     });
 
@@ -383,28 +388,39 @@ function checkCollisions() {
     let onGround = false;
 
     platforms.forEach(platform => {
-        // Check if player is on a platform
-        if (player.x + player.width > platform.x &&
-            player.x < platform.x + platform.width &&
-            player.y + player.height >= platform.y &&
-            player.y + player.height <= platform.y + platform.height / 2 &&
-            player.velocityY > 0) {
+        // Get the overlap between player and platform
+        const overlapX = Math.min(player.x + player.width, platform.x + platform.width) -
+            Math.max(player.x, platform.x);
+        const overlapY = Math.min(player.y + player.height, platform.y + platform.height) -
+            Math.max(player.y, platform.y);
 
-            player.y = platform.y - player.height;
-            player.velocityY = 0;
-            player.isJumping = false;
-            onGround = true;
-        }
-
-        // Check if player hits a platform from below
-        if (player.x + player.width > platform.x &&
-            player.x < platform.x + platform.width &&
-            player.y <= platform.y + platform.height &&
-            player.y >= platform.y + platform.height / 2 &&
-            player.velocityY < 0) {
-
-            player.y = platform.y + platform.height;
-            player.velocityY = 0;
+        // Check if there's an actual collision
+        if (overlapX > 0 && overlapY > 0) {
+            // Determine which side of the collision is smaller (to resolve that way)
+            if (overlapX < overlapY) {
+                // Horizontal collision
+                if (player.x < platform.x) {
+                    // Collision from left
+                    player.x = platform.x - player.width;
+                } else {
+                    // Collision from right
+                    player.x = platform.x + platform.width;
+                }
+                player.velocityX = 0;
+            } else {
+                // Vertical collision
+                if (player.y < platform.y) {
+                    // Collision from above (landing)
+                    player.y = platform.y - player.height;
+                    player.velocityY = 0;
+                    player.isJumping = false;
+                    onGround = true;
+                } else {
+                    // Collision from below (hitting head)
+                    player.y = platform.y + platform.height;
+                    player.velocityY = 0;
+                }
+            }
         }
     });
 
@@ -678,12 +694,36 @@ function loadNextLevel() {
         });
     }
 
-    // Add coins based on level
+    // Add coins based on level, ensuring they don't overlap with platforms
     const coinCount = 5 + currentLevel;
     for (let i = 0; i < coinCount; i++) {
+        let validPosition = false;
+        let coinX, coinY;
+
+        // Try to find a valid position that doesn't overlap with platforms
+        let attempts = 0;
+        while (!validPosition && attempts < 50) {
+            coinX = Math.random() * (canvas.width - 50);
+            coinY = 100 + Math.random() * 300;
+            validPosition = true;
+
+            // Check if this position overlaps with any platform
+            for (const platform of platforms) {
+                if (coinX + 16 > platform.x &&
+                    coinX < platform.x + platform.width &&
+                    coinY + 16 > platform.y &&
+                    coinY < platform.y + platform.height) {
+                    validPosition = false;
+                    break;
+                }
+            }
+            attempts++;
+        }
+
+        // Add the coin at the valid position or at a default position if no valid one was found
         coins.push({
-            x: Math.random() * (canvas.width - 50),
-            y: 100 + Math.random() * 300,
+            x: validPosition ? coinX : 50 + i * 50,
+            y: validPosition ? coinY : 100,
             width: 16,
             height: 16,
             frame: 0,
@@ -707,29 +747,35 @@ function restartGame() {
     setupGame();
 }
 
-// Add key listener for R key to restart
-window.addEventListener('keydown', (e) => {
-    keys[e.code] = true;
+// Quit game function
+function quitGame() {
+    if (gameStarted && !gameOver) {
+        // Stop all sounds
+        stopSound('backgroundMusic');
 
-    // Toggle character type with T key
-    if (e.code === 'KeyT') {
-        player.characterType = player.characterType === 'pepe' ? 'human' : 'pepe';
-    }
-});
+        // Show confirmation dialog
+        if (confirm('Are you sure you want to quit the game?')) {
+            // Reset game state
+            gameStarted = false;
+            gameRunning = false;
 
-// Toggle sound function
-function toggleSound() {
-    // Use the imported toggleMute function
-    const isMuted = toggleMute();
-    console.log('Sound toggled:', !isMuted);
+            // Show main menu or other appropriate UI
+            document.getElementById('startScreen').style.display = 'block';
 
-    // Play background music if not already playing and not muted
-    if (!isMuted && !gameOver) {
-        if (sounds.backgroundMusic.paused) {
-            playSound('backgroundMusic');
+            console.log('Game quit by user');
+        } else {
+            // Resume game if user cancels
+            if (!sounds.backgroundMusic.paused) {
+                playSound('backgroundMusic');
+            }
         }
     }
 }
 
-// Start the game
-init();
+// Toggle sound
+function toggleSound() {
+    toggleMute();
+}
+
+// Initialize the game when the window loads
+window.onload = init;
