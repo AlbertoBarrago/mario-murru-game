@@ -1,17 +1,6 @@
-// Main game file for Mario Murru
-
 // Import sound module
 import { sounds, playSound, stopSound, toggleMute, initSounds } from './sound.js';
-
-// Game constants
-const GRAVITY = 0.5;
-const JUMP_FORCE = -15;
-const MOVEMENT_SPEED = 5;
-const FRICTION = 0.8;
-const MAX_HEALTH = 100;
-const INITIAL_LIVES = 3;
-const ENEMY_DAMAGE = 25;
-const COIN_SCORE = 10;
+import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH, INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE } from './constants.js';
 
 // Game state
 let gameLoaded = false;
@@ -33,7 +22,6 @@ let player;
 let platforms = [];
 let enemies = [];
 let coins = [];
-let backgroundLayers = [];
 
 // Canvas setup
 const canvas = document.getElementById('gameCanvas');
@@ -790,11 +778,6 @@ function quitGame() {
             }
         }
     }
-}
-
-// Toggle sound
-function toggleSound() {
-    toggleMute();
 }
 
 // Initialize the game when the window loads
