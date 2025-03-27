@@ -50,6 +50,14 @@ To modify or extend the game:
 5. Replace placeholder images in `assets/images/` with your own sprites
 6. Modify `index.html` to change the layout or styling
 
+## Test 
+To run tests:
+1. Run `npm test`
+
+## Eslint
+To run eslint:
+1. Run `npm run lint`
+
 ## Building for Production
 
 To create an optimized production build:

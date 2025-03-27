@@ -1,12 +1,17 @@
 {
     "name": "mario-murru-game",
     "version": "1.0.3",
-    "description": "A Mario-style platformer game featuring Mario Murru",
+    "description": "A Mario-style platformed game featuring Mario Murru",
     "main": "index.html",
+    "type": "module",
+    "engines": {
+        "node": ">=16.0.0"
+    },
     "scripts": {
         "start": "webpack serve --mode development",
         "dev": "webpack serve --mode development",
         "lint": "eslint js/",
+        "lint:fix": "eslint js/ --fix",
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "webpack --mode production"
     },
@@ -32,7 +37,7 @@
         "babel-loader": "^9.1.2",
         "copy-webpack-plugin": "^11.0.0",
         "css-loader": "^6.8.1",
-        "eslint": "^8.42.0",
+        "eslint": "^9.23.0",
         "html-webpack-plugin": "^5.5.3",
         "http-server": "^14.1.1",
         "mini-css-extract-plugin": "^2.7.6",
