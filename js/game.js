@@ -1,12 +1,9 @@
 // Import modules
 import '../css/style.css';
-import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/sound.js';
 import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants.js';
-import Player from './core/player.js';
-import Enemy from './core/enemies.js';
-import Coin from './core/coin.js';
-import ParticleSystem from './core/particles.js';
-
+import { loadAssets, checkAssetsLoaded } from './assets/index.js';
+import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/source/sound.js';
+import { ParticleSystem, Enemy, Coin, Player } from './core';
 /**
  * @typedef {Object} GameState
  * @property {boolean} loaded - Whether game assets are loaded
@@ -34,14 +31,6 @@ let gameOver = false;
  * @property {number} loaded - Number of assets loaded
  * @property {number} total - Total number of assets to load
  */
-
-/** @type {Assets} - Game assets container */
-const assets = {
-    images: {},
-    sounds: {},
-    loaded: 0,
-    total: 0
-};
 
 /** @type {Player} - Player object */
 let player;
@@ -132,50 +121,13 @@ function init() {
         gameRunning = true;
     };
 
-    checkAssetsLoaded();
-}
-
-/**
- * Load game assets
- * @function loadAssets
- */
-function loadAssets() {
-    const imagesToLoad = [
-        // Add your assets here
-    ];
-
-    assets.total = imagesToLoad.length;
-
-    imagesToLoad.forEach(img => {
-        const image = new Image();
-        image.src = img.src;
-        image.onload = () => {
-            assets.images[img.name] = image;
-            assets.loaded++;
-        };
-        image.onerror = () => {
-            console.error(`Failed to load image: ${img.src}`);
-            const placeholder = new Image();
-            placeholder.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
-            assets.images[img.name] = placeholder;
-            assets.loaded++;
-        };
-    });
-}
-
-/**
- * Check if all assets are loaded
- * @function checkAssetsLoaded
- */
-function checkAssetsLoaded() {
-    if (assets.loaded === assets.total) {
-        setupGame();
-        document.getElementById('loading').style.display = 'none';
-        gameLoaded = true;
-        requestAnimationFrame(gameLoop);
-    } else {
-        setTimeout(checkAssetsLoaded, 100);
-    }
+    checkAssetsLoaded(
+        () => {
+            gameLoaded = true;
+            setupGame();
+            requestAnimationFrame(gameLoop);
+        }
+    );
 }
 
 /**
@@ -229,7 +181,7 @@ function setupGame() {
  * @function gameLoop
  * @param {number} timestamp - Current timestamp
  */
-function gameLoop(timestamp) {
+function gameLoop() {
     if (!gameLoaded) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);

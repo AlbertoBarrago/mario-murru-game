@@ -1,15 +1,15 @@
 /** @type {Object.<string, HTMLAudioElement>} */
-const sounds = {
-    jump: new Audio('assets/sounds/jump.wav'),
-    coin: new Audio('assets/sounds/coin.wav'),
-    damage: new Audio('assets/sounds/damage.wav'),
-    gameOver: new Audio('assets/sounds/game-over.wav'),
-    levelComplete: new Audio('assets/sounds/level-complete.wav'),
-    backgroundMusic: new Audio('assets/sounds/background.mp3')
-};
+const sounds = {};
 
-sounds.backgroundMusic.loop = true;
-sounds.backgroundMusic.volume = 0.5;
+// Define sound paths
+const soundPaths = {
+    jump: '../../../assets/sounds/jump.wav',
+    coin: '../../../assets/sounds/coin.wav',
+    damage: '../../../assets/sounds/damage.wav',
+    gameOver: '../../../assets/sounds/game-over.wav',
+    levelComplete: '../../../assets/sounds/level-complete.wav',
+    backgroundMusic: '../../../assets/sounds/background.mp3'
+};
 
 /**
  * Plays a sound by its name
@@ -28,6 +28,8 @@ function playSound(soundName) {
                 }
             });
         }
+    } else {
+        console.warn(`Sound ${soundName} not loaded or doesn't exist`);
     }
 }
 
@@ -61,15 +63,34 @@ function toggleMute() {
  * Initializes all sounds and sets up event listeners
  */
 function initSounds() {
-    Object.values(sounds).forEach(sound => {
-        sound.load();
-        sound.addEventListener('play', () => {
-            console.log(`Playing sound: ${Object.keys(sounds).find(key => sounds[key] === sound)}`);
-        });
-        sound.addEventListener('error', (e) => {
-            console.error(`Error with sound: ${Object.keys(sounds).find(key => sounds[key] === sound)}`, e);
-        });
+    // Create audio objects only during initialization
+    Object.entries(soundPaths).forEach(([key, path]) => {
+        try {
+            sounds[key] = new Audio(path);
+
+            // Set properties for background music
+            if (key === 'backgroundMusic') {
+                sounds[key].loop = true;
+                sounds[key].volume = 0.5;
+            }
+
+            // Add event listeners
+            sounds[key].addEventListener('play', () => {
+                console.log(`Playing sound: ${key}`);
+            });
+
+            sounds[key].addEventListener('error', (e) => {
+                console.error(`Error with sound: ${key}`, e);
+            });
+
+            // Preload the audio
+            sounds[key].load();
+        } catch (error) {
+            console.error(`Failed to initialize sound: ${key}`, error);
+        }
     });
+
+    console.log('Sound system initialized');
 }
 
 export { sounds, playSound, stopSound, toggleMute, initSounds };

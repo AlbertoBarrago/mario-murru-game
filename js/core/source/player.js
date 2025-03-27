@@ -1,4 +1,4 @@
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from '../constants.js';
+import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from '../../constants.js';
 import { playSound } from './sound.js';
 
 /**
