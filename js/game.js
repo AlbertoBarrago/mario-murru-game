@@ -60,30 +60,30 @@ const ctx = canvas.getContext('2d');
 
 /** @type {UIElement} - Health bar UI element */
 let healthBar = {
-    x: 20,
-    y: 15,
-    width: 150,
-    height: 15,
-    borderWidth: 2
+  x: 20,
+  y: 15,
+  width: 150,
+  height: 15,
+  borderWidth: 2
 };
 
 /** @type {UIElement} - Lives display UI element */
 let livesDisplay = {
-    x: 20,
-    y: 60,
-    spacing: 25
+  x: 20,
+  y: 60,
+  spacing: 25
 };
 
 /** @type {UIElement} - Level display UI element */
 let levelDisplay = {
-    x: canvas.width - 100,
-    y: 30
+  x: canvas.width - 100,
+  y: 30
 };
 
 /** @type {UIElement} - Score display UI element */
 let scoreDisplay = {
-    x: canvas.width - 100,
-    y: 60
+  x: canvas.width - 100,
+  y: 60
 };
 
 /** @type {Object.<string, boolean>} - Keyboard input state */
@@ -94,40 +94,40 @@ const keys = {};
  * @function init
  */
 function init() {
-    initSounds();
-    loadAssets();
+  initSounds();
+  loadAssets();
 
-    window.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
+  window.addEventListener('keydown', (e) => {
+    keys[e.code] = true;
 
-        if (e.code === 'KeyM') {
-            toggleMute();
-        }
+    if (e.code === 'KeyM') {
+      toggleMute();
+    }
 
-        if (e.code === 'KeyQ') {
-            quitGame();
-        }
-    });
+    if (e.code === 'KeyQ') {
+      quitGame();
+    }
+  });
 
-    window.addEventListener('keyup', (e) => {
-        keys[e.code] = false;
-    });
+  window.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+  });
 
-    window.gameStarted = false;
-    window.gameRunning = false;
+  window.gameStarted = false;
+  window.gameRunning = false;
 
-    window.startGame = function () {
-        gameStarted = true;
-        gameRunning = true;
-    };
+  window.startGame = function () {
+    gameStarted = true;
+    gameRunning = true;
+  };
 
-    checkAssetsLoaded(
-        () => {
-            gameLoaded = true;
-            setupGame();
-            requestAnimationFrame(gameLoop);
-        }
-    );
+  checkAssetsLoaded(
+    () => {
+      gameLoaded = true;
+      setupGame();
+      requestAnimationFrame(gameLoop);
+    }
+  );
 }
 
 /**
@@ -135,45 +135,45 @@ function init() {
  * @function setupGame
  */
 function setupGame() {
-    player = new Player(100, 300);
-    player.lives = INITIAL_LIVES;
-    particleSystem = new ParticleSystem();
+  player = new Player(100, 300);
+  player.lives = INITIAL_LIVES;
+  particleSystem = new ParticleSystem();
 
-    // Ground
-    platforms.push({
-        x: 0,
-        y: 450,
-        width: 800,
-        height: 30
-    });
+  // Ground
+  platforms.push({
+    x: 0,
+    y: 450,
+    width: 800,
+    height: 30
+  });
 
-    // Platforms
-    platforms.push({
-        x: 200,
-        y: 350,
-        width: 100,
-        height: 20
-    });
+  // Platforms
+  platforms.push({
+    x: 200,
+    y: 350,
+    width: 100,
+    height: 20
+  });
 
-    platforms.push({
-        x: 400,
-        y: 300,
-        width: 100,
-        height: 20
-    });
+  platforms.push({
+    x: 400,
+    y: 300,
+    width: 100,
+    height: 20
+  });
 
-    platforms.push({
-        x: 600,
-        y: 250,
-        width: 100,
-        height: 20
-    });
+  platforms.push({
+    x: 600,
+    y: 250,
+    width: 100,
+    height: 20
+  });
 
-    enemies.push(new Enemy(300, 418, 32, 32, 2));
+  enemies.push(new Enemy(300, 418, 32, 32, 2));
 
-    for (let i = 0; i < 5; i++) {
-        coins.push(new Coin(150 + i * 120, 300));
-    }
+  for (let i = 0; i < 5; i++) {
+    coins.push(new Coin(150 + i * 120, 300));
+  }
 }
 
 /**
@@ -182,27 +182,27 @@ function setupGame() {
  * @param {number} timestamp - Current timestamp
  */
 function gameLoop() {
-    if (!gameLoaded) return;
+  if (!gameLoaded) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (!gameStarted) {
-        render();
-    } else if (gameOver) {
-        renderGameOver();
-    } else {
-        gameRunning = true;
+  if (!gameStarted) {
+    render();
+  } else if (gameOver) {
+    renderGameOver();
+  } else {
+    gameRunning = true;
 
-        if (sounds.backgroundMusic.paused) {
-            playSound('backgroundMusic');
-        }
-
-        update();
-        render();
-        checkLevelComplete();
+    if (sounds.backgroundMusic.paused) {
+      playSound('backgroundMusic');
     }
 
-    requestAnimationFrame(gameLoop);
+    update();
+    render();
+    checkLevelComplete();
+  }
+
+  requestAnimationFrame(gameLoop);
 }
 
 /**
@@ -210,11 +210,11 @@ function gameLoop() {
  * @function update
  */
 function update() {
-    player.update(keys, canvas.width, canvas.height);
-    enemies.forEach(enemy => enemy.update(canvas.width));
-    coins.forEach(coin => coin.update());
-    particleSystem.update();
-    checkCollisions();
+  player.update(keys, canvas.width, canvas.height);
+  enemies.forEach(enemy => enemy.update(canvas.width));
+  coins.forEach(coin => coin.update());
+  particleSystem.update();
+  checkCollisions();
 }
 
 /**
@@ -222,92 +222,92 @@ function update() {
  * @function checkCollisions
  */
 function checkCollisions() {
-    let onGround = false;
+  let onGround = false;
 
-    platforms.forEach(platform => {
-        const overlapX = Math.min(player.x + player.width, platform.x + platform.width) -
+  platforms.forEach(platform => {
+    const overlapX = Math.min(player.x + player.width, platform.x + platform.width) -
             Math.max(player.x, platform.x);
-        const overlapY = Math.min(player.y + player.height, platform.y + platform.height) -
+    const overlapY = Math.min(player.y + player.height, platform.y + platform.height) -
             Math.max(player.y, platform.y);
 
-        if (overlapX > 0 && overlapY > 0) {
-            if (overlapX < overlapY) {
-                if (player.x < platform.x) {
-                    player.x = platform.x - player.width;
-                } else {
-                    player.x = platform.x + platform.width;
-                }
-                player.velocityX = 0;
-            } else {
-                if (player.y < platform.y) {
-                    player.y = platform.y - player.height;
-                    player.velocityY = 0;
-                    player.isJumping = false;
-                    onGround = true;
-                } else {
-                    player.y = platform.y + platform.height;
-                    player.velocityY = 0;
-                }
-            }
+    if (overlapX > 0 && overlapY > 0) {
+      if (overlapX < overlapY) {
+        if (player.x < platform.x) {
+          player.x = platform.x - player.width;
+        } else {
+          player.x = platform.x + platform.width;
         }
-    });
-
-    if (!onGround) {
-        player.isJumping = true;
+        player.velocityX = 0;
+      } else {
+        if (player.y < platform.y) {
+          player.y = platform.y - player.height;
+          player.velocityY = 0;
+          player.isJumping = false;
+          onGround = true;
+        } else {
+          player.y = platform.y + platform.height;
+          player.velocityY = 0;
+        }
+      }
     }
+  });
 
-    enemies.forEach((enemy, index) => {
-        if (player.x + player.width > enemy.x &&
+  if (!onGround) {
+    player.isJumping = true;
+  }
+
+  enemies.forEach((enemy, index) => {
+    if (player.x + player.width > enemy.x &&
             player.x < enemy.x + enemy.width &&
             player.y + player.height > enemy.y &&
             player.y < enemy.y + enemy.height) {
 
-            if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
-                // Create explosion effect at enemy position
-                particleSystem.createExplosion(
-                    enemy.x + enemy.width / 2,
-                    enemy.y + enemy.height / 2,
-                    30,
-                    ['#ff0000', '#ff7700', '#ffff00', '#ff00ff']
-                );
+      if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
+        // Create explosion effect at enemy position
+        particleSystem.createExplosion(
+          enemy.x + enemy.width / 2,
+          enemy.y + enemy.height / 2,
+          30,
+          ['#ff0000', '#ff7700', '#ffff00', '#ff00ff']
+        );
 
-                // Create score popup
-                particleSystem.createScorePopup(enemy.x + enemy.width / 2, enemy.y, 20);
+        // Create score popup
+        particleSystem.createScorePopup(enemy.x + enemy.width / 2, enemy.y, 20);
 
-                // Remove enemy
-                enemies.splice(index, 1);
-                player.velocityY = JUMP_FORCE / 1.5;
-                score += 20;
+        // Remove enemy
+        enemies.splice(index, 1);
+        player.velocityY = JUMP_FORCE / 1.5;
+        score += 20;
 
-                // Play sound effect
-                playSound('damage');
-            } else if (!player.invulnerable) {
-                const healthDepleted = player.takeDamage(ENEMY_DAMAGE);
-                if (healthDepleted) {
-                    player.lives--;
-                    if (player.lives <= 0) {
-                        gameOver = true;
-                        playSound('gameOver');
-                    } else {
-                        player.reset(100, 300);
-                    }
-                }
-            }
+        // Play sound effect
+        playSound('damage');
+      } else if (!player.invulnerable) {
+        const healthDepleted = player.takeDamage(ENEMY_DAMAGE);
+        if (healthDepleted) {
+          player.lives--;
+          if (player.lives <= 0) {
+            gameOver = true;
+            playSound('gameOver');
+          } else {
+            player.reset(100, 300);
+          }
         }
-    });
+      }
+    }
+  });
 
-    coins.forEach(coin => {
-        if (!coin.collected &&
+  coins.forEach(coin => {
+    if (!coin.collected &&
             player.x + player.width > coin.x &&
             player.x < coin.x + coin.width &&
             player.y + player.height > coin.y &&
             player.y < coin.y + coin.height) {
 
-            coin.collected = true;
-            score += COIN_SCORE;
-            playSound('coin');
-        }
-    });
+      coin.collected = true;
+      score += COIN_SCORE;
+      playSound('coin');
+    }
+  });
 }
 
 /**
@@ -315,20 +315,20 @@ function checkCollisions() {
  * @function render
  */
 function render() {
-    ctx.fillStyle = '#5c94fc';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#5c94fc';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#8b4513';
-    platforms.forEach(platform => {
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-    });
+  ctx.fillStyle = '#8b4513';
+  platforms.forEach(platform => {
+    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+  });
 
-    coins.forEach(coin => coin.render(ctx));
-    enemies.forEach(enemy => enemy.render(ctx));
-    player.render(ctx);
-    particleSystem.render(ctx);
+  coins.forEach(coin => coin.render(ctx));
+  enemies.forEach(enemy => enemy.render(ctx));
+  player.render(ctx);
+  particleSystem.render(ctx);
 
-    renderUI();
+  renderUI();
 }
 
 /**
@@ -336,43 +336,43 @@ function render() {
  * @function renderUI
  */
 function renderUI() {
-    // Health bar border
-    ctx.fillStyle = '#000';
-    ctx.fillRect(
-        healthBar.x - healthBar.borderWidth,
-        healthBar.y - healthBar.borderWidth,
-        healthBar.width + healthBar.borderWidth * 2,
-        healthBar.height + healthBar.borderWidth * 2
-    );
+  // Health bar border
+  ctx.fillStyle = '#000';
+  ctx.fillRect(
+    healthBar.x - healthBar.borderWidth,
+    healthBar.y - healthBar.borderWidth,
+    healthBar.width + healthBar.borderWidth * 2,
+    healthBar.height + healthBar.borderWidth * 2
+  );
 
-    // Health bar background
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+  // Health bar background
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
 
-    // Health amount
-    const healthWidth = (player.health / 100) * healthBar.width;
-    ctx.fillStyle = player.health > 30 ? '#0f0' : '#f00';
-    ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
+  // Health amount
+  const healthWidth = (player.health / 100) * healthBar.width;
+  ctx.fillStyle = player.health > 30 ? '#0f0' : '#f00';
+  ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
 
-    // Health text
-    ctx.fillStyle = '#000';
-    ctx.font = '12px Arial';
-    ctx.fillText(`HP: ${player.health}/100`, healthBar.x + 5, healthBar.y + 12);
+  // Health text
+  ctx.fillStyle = '#000';
+  ctx.font = '12px Arial';
+  ctx.fillText(`HP: ${player.health}/100`, healthBar.x + 5, healthBar.y + 12);
 
-    // Lives
-    ctx.fillStyle = '#f00';
-    ctx.font = '16px Arial';
-    ctx.fillText(`Lives: ${player.lives}`, livesDisplay.x, livesDisplay.y);
+  // Lives
+  ctx.fillStyle = '#f00';
+  ctx.font = '16px Arial';
+  ctx.fillText(`Lives: ${player.lives}`, livesDisplay.x, livesDisplay.y);
 
-    // Level
-    ctx.fillStyle = '#000';
-    ctx.font = '16px Arial';
-    ctx.fillText(`Level: ${currentLevel}`, levelDisplay.x, levelDisplay.y);
+  // Level
+  ctx.fillStyle = '#000';
+  ctx.font = '16px Arial';
+  ctx.fillText(`Level: ${currentLevel}`, levelDisplay.x, levelDisplay.y);
 
-    // Score
-    ctx.fillStyle = '#000';
-    ctx.font = '16px Arial';
-    ctx.fillText(`Score: ${score}`, scoreDisplay.x, scoreDisplay.y);
+  // Score
+  ctx.fillStyle = '#000';
+  ctx.font = '16px Arial';
+  ctx.fillText(`Score: ${score}`, scoreDisplay.x, scoreDisplay.y);
 }
 
 /**
@@ -380,25 +380,25 @@ function renderUI() {
  * @function renderGameOver
  */
 function renderGameOver() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#fff';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
+  ctx.fillStyle = '#fff';
+  ctx.font = '48px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
 
-    ctx.font = '24px Arial';
-    ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+  ctx.font = '24px Arial';
+  ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
 
-    ctx.font = '18px Arial';
-    ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
+  ctx.font = '18px Arial';
+  ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
 
-    ctx.textAlign = 'left';
+  ctx.textAlign = 'left';
 
-    if (keys['KeyR']) {
-        restartGame();
-    }
+  if (keys['KeyR']) {
+    restartGame();
+  }
 }
 
 /**
@@ -406,13 +406,13 @@ function renderGameOver() {
  * @function checkLevelComplete
  */
 function checkLevelComplete() {
-    const allCoinsCollected = coins.every(coin => coin.collected);
+  const allCoinsCollected = coins.every(coin => coin.collected);
 
-    if (allCoinsCollected) {
-        playSound('levelComplete');
-        currentLevel++;
-        loadNextLevel();
-    }
+  if (allCoinsCollected) {
+    playSound('levelComplete');
+    currentLevel++;
+    loadNextLevel();
+  }
 }
 
 /**
@@ -420,73 +420,73 @@ function checkLevelComplete() {
  * @function loadNextLevel
  */
 function loadNextLevel() {
-    player.reset(100, 300);
+  player.reset(100, 300);
 
-    platforms = [];
-    enemies = [];
-    coins = [];
+  platforms = [];
+  enemies = [];
+  coins = [];
 
-    // Add ground platform
+  // Add ground platform
+  platforms.push({
+    x: 0,
+    y: 450,
+    width: 800,
+    height: 30
+  });
+
+  // Add more platforms based on level
+  const platformCount = 3 + currentLevel;
+  for (let i = 0; i < platformCount; i++) {
     platforms.push({
-        x: 0,
-        y: 450,
-        width: 800,
-        height: 30
+      x: Math.random() * (canvas.width - 100),
+      y: 150 + Math.random() * 250,
+      width: 70 + Math.random() * 100,
+      height: 20
     });
+  }
 
-    // Add more platforms based on level
-    const platformCount = 3 + currentLevel;
-    for (let i = 0; i < platformCount; i++) {
-        platforms.push({
-            x: Math.random() * (canvas.width - 100),
-            y: 150 + Math.random() * 250,
-            width: 70 + Math.random() * 100,
-            height: 20
-        });
-    }
+  // Add more enemies based on level
+  const enemyCount = currentLevel;
+  for (let i = 0; i < enemyCount; i++) {
+    const speed = 1 + Math.random() * currentLevel;
+    enemies.push(new Enemy(
+      100 + Math.random() * (canvas.width - 200),
+      418,
+      32,
+      32,
+      speed
+    ));
+  }
 
-    // Add more enemies based on level
-    const enemyCount = currentLevel;
-    for (let i = 0; i < enemyCount; i++) {
-        const speed = 1 + Math.random() * currentLevel;
-        enemies.push(new Enemy(
-            100 + Math.random() * (canvas.width - 200),
-            418,
-            32,
-            32,
-            speed
-        ));
-    }
+  // Add coins based on level
+  const coinCount = 5 + currentLevel;
+  for (let i = 0; i < coinCount; i++) {
+    let validPosition = false;
+    let coinX, coinY;
 
-    // Add coins based on level
-    const coinCount = 5 + currentLevel;
-    for (let i = 0; i < coinCount; i++) {
-        let validPosition = false;
-        let coinX, coinY;
+    let attempts = 0;
+    while (!validPosition && attempts < 50) {
+      coinX = Math.random() * (canvas.width - 50);
+      coinY = 100 + Math.random() * 300;
+      validPosition = true;
 
-        let attempts = 0;
-        while (!validPosition && attempts < 50) {
-            coinX = Math.random() * (canvas.width - 50);
-            coinY = 100 + Math.random() * 300;
-            validPosition = true;
-
-            for (const platform of platforms) {
-                if (coinX + 16 > platform.x &&
+      for (const platform of platforms) {
+        if (coinX + 16 > platform.x &&
                     coinX < platform.x + platform.width &&
                     coinY + 16 > platform.y &&
                     coinY < platform.y + platform.height) {
-                    validPosition = false;
-                    break;
-                }
-            }
-            attempts++;
+          validPosition = false;
+          break;
         }
-
-        coins.push(new Coin(
-            validPosition ? coinX : 50 + i * 50,
-            validPosition ? coinY : 100
-        ));
+      }
+      attempts++;
     }
+
+    coins.push(new Coin(
+      validPosition ? coinX : 50 + i * 50,
+      validPosition ? coinY : 100
+    ));
+  }
 }
 
 /**
@@ -494,10 +494,10 @@ function loadNextLevel() {
  * @function restartGame
  */
 function restartGame() {
-    gameOver = false;
-    currentLevel = 1;
-    score = 0;
-    setupGame();
+  gameOver = false;
+  currentLevel = 1;
+  score = 0;
+  setupGame();
 }
 
 /**
@@ -505,20 +505,20 @@ function restartGame() {
  * @function quitGame
  */
 function quitGame() {
-    if (gameStarted && !gameOver) {
-        stopSound('backgroundMusic');
+  if (gameStarted && !gameOver) {
+    stopSound('backgroundMusic');
 
-        if (confirm('Are you sure you want to quit the game?')) {
-            gameStarted = false;
-            gameRunning = false;
-            document.getElementById('startScreen').style.display = 'block';
-            console.log('Game quit by user');
-        } else {
-            if (!sounds.backgroundMusic.paused) {
-                playSound('backgroundMusic');
-            }
-        }
+    if (confirm('Are you sure you want to quit the game?')) {
+      gameStarted = false;
+      gameRunning = false;
+      document.getElementById('startScreen').style.display = 'block';
+      console.warn('Game quit by user');
+    } else {
+      if (!sounds.backgroundMusic.paused) {
+        playSound('backgroundMusic');
+      }
     }
+  }
 }
 
 // Initialize the game when the window loads

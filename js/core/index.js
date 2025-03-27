@@ -5,8 +5,8 @@ import Enemy from './source/enemies.js';
 import Coin from './source/coin.js';
 
 export {
-    ParticleSystem,
-    Player,
-    Enemy,
-    Coin
-}
+  ParticleSystem,
+  Player,
+  Enemy,
+  Coin
+};
