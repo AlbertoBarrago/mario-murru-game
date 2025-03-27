@@ -8,6 +8,7 @@ Mario Murru is a 2D platformer where you control the hero, Mario Murru, as he ju
 
 ## Screenshots
 ![Game Screenshot 1](assets/images/screenshots/demo.png)
+![Game Screenshot 2](assets/images/screenshots/demoGame.png)
 
 ## How to Play
 
