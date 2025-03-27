@@ -1,6 +1,8 @@
 export default {
     // Use ES modules
-    transform: {},
+    transform: {
+        '^.+\\.js$': 'babel-jest',
+    },
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js': '$1',
     },
