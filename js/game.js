@@ -1,13 +1,9 @@
 // Import modules
 import '../css/style.css';
-import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/sound.js';
 import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants.js';
-import { assets, loadAssets, checkAssetsLoaded } from './assets.js';
-import Player from './core/player.js';
-import Enemy from './core/enemies.js';
-import Coin from './core/coin.js';
-import ParticleSystem from './core/particles.js';
-
+import { loadAssets, checkAssetsLoaded } from './assets/index.js';
+import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/source/sound.js';
+import { ParticleSystem, Enemy, Coin, Player } from './core';
 /**
  * @typedef {Object} GameState
  * @property {boolean} loaded - Whether game assets are loaded
@@ -185,7 +181,7 @@ function setupGame() {
  * @function gameLoop
  * @param {number} timestamp - Current timestamp
  */
-function gameLoop(timestamp) {
+function gameLoop() {
     if (!gameLoaded) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
