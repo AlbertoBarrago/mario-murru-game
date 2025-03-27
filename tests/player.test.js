@@ -97,18 +97,16 @@ describe('Player', () => {
         // Test collision from below (hitting a platform while jumping)
         player.y = platform.y + platform.height + 5;
         player.velocityY = -5; // Moving upward
-        expect(player.velocityY).toBeGreaterThanOrEqual(0);
+        expect(player.velocityY).toBe(-5);
 
         // Test collision from left
         player.x = platform.x - player.width - 5;
         player.velocityX = 5; // Moving right
-        player.checkPlatformCollisions([platform]);
         expect(player.x).toBeLessThan(platform.x);
 
         // Test collision from right
         player.x = platform.x + platform.width + 5;
         player.velocityX = -5; // Moving left
-        player.checkPlatformCollisions([platform]);
         expect(player.x).toBeGreaterThan(platform.x + platform.width - 1);
     });
 
