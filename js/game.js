@@ -110,13 +110,10 @@ function init() {
 
 // Asset loading
 function loadAssets() {
-    // Define assets to load
+    // Define assets to load - removing spritesheet
     const imagesToLoad = [
-        { name: 'player', src: 'assets/images/mario-murru.png' },
-        { name: 'tiles', src: 'assets/images/tiles.png' },
-        { name: 'enemies', src: 'assets/images/enemies.png' },
-        { name: 'coin', src: 'assets/images/coin.png' },
-        { name: 'background', src: 'assets/images/background.png' }
+        // Only load necessary assets
+        // ADD sprites here...
     ];
 
     assets.total = imagesToLoad.length;
@@ -156,7 +153,7 @@ function checkAssetsLoaded() {
 
 // Game setup
 function setupGame() {
-    // Create player
+    // Create player - removing sprite information
     player = {
         x: 100,
         y: 300,
@@ -174,7 +171,7 @@ function setupGame() {
         lives: INITIAL_LIVES,
         invulnerable: false,
         invulnerableTimer: 0,
-        invulnerableDuration: 60, // frames of invulnerability after being hit
+        invulnerableDuration: 60,
         characterType: 'pepe' // 'human' or 'pepe'
     };
 
@@ -209,7 +206,7 @@ function setupGame() {
         height: 20
     });
 
-    // Create enemies
+    // Create enemies - removing sprite information
     enemies.push({
         x: 300,
         y: 418,
@@ -324,6 +321,11 @@ function updatePlayer() {
 
     // Apply gravity
     player.velocityY += GRAVITY;
+
+    // Limit falling speed to prevent tunneling through platforms
+    if (player.velocityY > 15) {
+        player.velocityY = 15;
+    }
 
     // Update position
     player.x += player.velocityX;
@@ -519,13 +521,31 @@ function render() {
         }
     });
 
-    // Draw enemies
+    // Draw enemies - back to simple drawing
     ctx.fillStyle = '#ff0000';
     enemies.forEach(enemy => {
         ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+
+        // Add eyes to make it look like an enemy
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(enemy.x + 8, enemy.y + 8, 4, 4);
+        ctx.fillRect(enemy.x + 20, enemy.y + 8, 4, 4);
+
+        // Add angry eyebrows
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(enemy.x + 6, enemy.y + 6);
+        ctx.lineTo(enemy.x + 12, enemy.y + 10);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(enemy.x + 26, enemy.y + 6);
+        ctx.lineTo(enemy.x + 20, enemy.y + 10);
+        ctx.stroke();
     });
 
-    // Draw player
+    // Draw player - back to simple drawing
     if (player.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
         // Blinking effect when invulnerable
         ctx.globalAlpha = 0.5;
