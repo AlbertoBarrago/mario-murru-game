@@ -21,6 +21,26 @@ export default class Enemy {
     this.frameCount = 2;
     this.frameDelay = 10;
     this.frameTimer = 0;
+    this.isPaused = false;
+    this.savedVelocity = null;
+  }
+
+  /**
+   * Pauses the enemy's movement and animation
+   */
+  pause() {
+    this.isPaused = true;
+  }
+
+  /**
+   * Resumes the enemy's movement and animation
+   */
+  resume() {
+    this.isPaused = false;
+    if (this.savedVelocity !== null) {
+      this.velocityX = this.savedVelocity;
+      this.savedVelocity = null;
+    }
   }
 
   /**
@@ -59,6 +79,12 @@ export default class Enemy {
     // Calculate the classes position in the sprite sheet
     const sourceX = frameIndex * 32; // Each frame is 32px wide
     const sourceY = 0;
+
+    // Store original velocity when paused
+    if (this.isPaused && !this.savedVelocity) {
+      this.savedVelocity = this.velocityX;
+      this.velocityX = 0;
+    }
 
     // Draw the sprite
     try {
