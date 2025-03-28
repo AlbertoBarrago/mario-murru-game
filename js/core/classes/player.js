@@ -105,14 +105,14 @@ export default class Player {
       ctx.globalAlpha = 0.5;
     }
 
-    // Determine which sprite sheet to use based on character type
+    // Determine which sprite sheet to use based on a character type
     const spriteSheet = this.characterType === 'pepe' ? 'pepe' : 'mario';
 
     // Calculate which frame to use based on state
     let frameIndex = 0; // Default to idle frame
 
     if (this.isJumping) {
-      frameIndex = 3; // Jumping frame (4th frame in the sprite sheet)
+      frameIndex = 3; // Jumping to frame (4th frame in the sprite sheet)
     } else if (this.velocityX !== 0) {
       // Walking animation (frames 1-2 in the sprite sheet)
       frameIndex = this.frame + 1;
