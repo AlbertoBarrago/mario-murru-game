@@ -1,6 +1,6 @@
 {
     "name": "mario-murru-game",
-    "version": "1.0.6",
+    "version": "1.0.5",
     "description": "A Mario-style platformed game featuring Mario Murru",
     "main": "index.html",
     "engines": {
