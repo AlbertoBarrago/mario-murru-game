@@ -29,17 +29,17 @@ jobs:
         run: npm run test
 
       - name: Upload test coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: coverage
           path: coverage/
 
-      - name: Generate coverage badges
-        uses: jpb06/jest-badges-action@latest
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          coverage-summary-path: ./coverage/coverage-summary.json
-          branches: main
+          directory: ./coverage/
+          fail_ci_if_error: false
 
       - name: Commit coverage badges
         if: github.ref == 'refs/heads/main'
@@ -48,4 +48,4 @@ jobs:
           git config --local user.name "GitHub Action"
           find . -name "*.svg" | xargs git add || echo "No SVG files found"
           git commit -m "docs: update coverage badges" || echo "No changes to commit"
-          git push || echo "Nothing to push"
+          git push || echo "Nothing to push"          git push || echo "Nothing to push"
