@@ -9,196 +9,6 @@ jest.mock('../js/core/classes/sound.js', () => ({
     sounds: {}
 }));
 
-describe('Player Update Method', () => {
-    let player;
-    const canvasWidth = 800;
-    const canvasHeight = 600;
-
-    beforeEach(() => {
-        player = new Player(100, 100);
-        jest.clearAllMocks();
-    });
-
-    test('should handle diagonal movement with multiple keys', () => {
-        const keys = {
-            'ArrowRight': true,
-            'KeyW': true
-        };
-
-        player.update(keys, canvasWidth, canvasHeight);
-        expect(player.velocityX).toBeGreaterThan(0);
-        expect(player.velocityY).toBeLessThan(0);
-        expect(player.direction).toBe('right');
-        expect(player.isJumping).toBe(true);
-    });
-
-    test('should handle alternative movement keys', () => {
-        const keys = {
-            'KeyA': true,
-            'Space': true
-        };
-
-        player.update(keys, canvasWidth, canvasHeight);
-        expect(player.velocityX).toBeLessThan(0);
-        expect(player.velocityY).toBeLessThan(0);
-        expect(player.direction).toBe('left');
-        expect(player.isJumping).toBe(true);
-    });
-
-    test('should apply friction when no movement keys are pressed', () => {
-        player.velocityX = 5;
-        player.update({}, canvasWidth, canvasHeight);
-        expect(player.velocityX).toBeLessThan(5);
-        expect(player.frame).toBe(0);
-        expect(player.frameTimer).toBe(0);
-    });
-
-    test('should cap falling speed', () => {
-        player.velocityY = 20;
-        player.update({}, canvasWidth, canvasHeight);
-        expect(player.velocityY).toBe(15);
-    });
-
-    test('should handle frame animation timing', () => {
-        player.frameTimer = player.frameDelay + 1;
-        player.frame = 0;
-        player.update({'ArrowRight': true}, canvasWidth, canvasHeight);
-        expect(player.frame).toBe(1);
-        expect(player.frameTimer).toBe(0);
-    });
-
-    test('should prevent double jump', () => {
-        const keys = {'ArrowUp': true};
-        player.isJumping = true;
-        player.update(keys, canvasWidth, canvasHeight);
-        expect(player.velocityY).toBeGreaterThan(0);
-    });
-
-    test('should handle character switch key release', () => {
-        player.lastKeyT = true;
-        player.update({'KeyT': false}, canvasWidth, canvasHeight);
-        expect(player.lastKeyT).toBe(false);
-        expect(player.characterType).toBe('pepe');
-    });
-
-    test('should reset frame animation when stopping movement', () => {
-        player.frameTimer = 5;
-        player.frame = 2;
-        player.update({}, canvasWidth, canvasHeight);
-        expect(player.frameTimer).toBe(0);
-        expect(player.frame).toBe(0);
-    });
-
-    test('should maintain direction when jumping', () => {
-        player.direction = 'left';
-        player.update({'Space': true}, canvasWidth, canvasHeight);
-        expect(player.direction).toBe('left');
-    });
-});
-
-describe('Player Damage and Movement Methods', () => {
-    let player;
-
-    beforeEach(() => {
-        player = new Player(100, 100);
-        global.playSound = jest.fn();
-    });
-
-    test('takeDamage should reduce health and make player invulnerable', () => {
-        const initialHealth = player.health;
-        const damage = 20;
-        const result = player.takeDamage(damage);
-
-        expect(player.health).toBe(initialHealth - damage);
-        expect(player.invulnerable).toBe(true);
-        expect(player.invulnerableTimer).toBe(0);
-        expect(result).toBe(false);
-    });
-
-    test('takeDamage should return true when health drops to zero or below', () => {
-        const result = player.takeDamage(player.health);
-        expect(result).toBe(true);
-    });
-
-    test('reset should restore player to initial state at new position', () => {
-        player.x = 50;
-        player.y = 50;
-        player.velocityX = 10;
-        player.velocityY = -5;
-        player.health = 30;
-
-        player.reset(200, 300);
-
-        expect(player.x).toBe(200);
-        expect(player.y).toBe(300);
-        expect(player.velocityX).toBe(0);
-        expect(player.velocityY).toBe(0);
-        expect(player.health).toBe(MAX_HEALTH);
-    });
-
-    test('should toggle character type when T key is pressed and released', () => {
-        expect(player.characterType).toBe('pepe');
-        player.lastKeyT = false;
-
-        // Press T
-        player.update({'KeyT': true}, 800, 600);
-        expect(player.characterType).toBe('mario');
-        expect(player.lastKeyT).toBe(true);
-
-        // Release T
-        player.update({'KeyT': false}, 800, 600);
-        expect(player.lastKeyT).toBe(false);
-
-        // Press T again
-        player.update({'KeyT': true}, 800, 600);
-        expect(player.characterType).toBe('pepe');
-    });
-
-    test('should apply gravity and cap falling speed', () => {
-        player.velocityY = 10;
-        player.update({}, 800, 600);
-
-        // Gravity should increase velocityY
-        expect(player.velocityY).toBe(10 + GRAVITY);
-
-        // Set velocityY to the just below cap
-        player.velocityY = 14.9;
-        player.update({}, 800, 600);
-
-        // Should be capped at 15
-        expect(player.velocityY).toBe(15);
-    });
-
-    test('should update position based on velocity', () => {
-        player.velocityX = 5;
-        player.velocityY = -3;
-        const initialX = player.x;
-
-        player.update({}, 800, 600);
-
-        expect(player.x).toBe(initialX + 4);
-        expect(player.y).toBe(97.5);
-
-    });
-
-    test('should prevent player from moving outside canvas boundaries', () => {
-        player.x = -5;
-        player.update({}, 800, 600);
-        expect(player.x).toBe(0);
-
-        player.x = 800;
-        player.update({}, 800, 600);
-        expect(player.x).toBe(800 - player.width);
-
-        player.y = 600;
-        player.isJumping = true;
-        player.update({}, 800, 600);
-        expect(player.y).toBe(600 - player.height);
-        expect(player.velocityY).toBe(0);
-        expect(player.isJumping).toBe(false);
-    });
-});
-
 describe('Player', () => {
     let player;
     const canvasWidth = 800;
@@ -373,6 +183,193 @@ describe('Player', () => {
         player.takeDamage(player.health);
 
         expect(player.lives).toBe(0);
+    });
+});
+
+describe('Player Update Method', () => {
+    let player;
+    const canvasWidth = 800;
+    const canvasHeight = 600;
+
+    beforeEach(() => {
+        player = new Player(100, 100);
+        jest.clearAllMocks();
+    });
+
+    test('should handle diagonal movement with multiple keys', () => {
+        const keys = {
+            'ArrowRight': true,
+            'KeyW': true
+        };
+
+        player.update(keys, canvasWidth, canvasHeight);
+        expect(player.velocityX).toBeGreaterThan(0);
+        expect(player.velocityY).toBeLessThan(0);
+        expect(player.direction).toBe('right');
+        expect(player.isJumping).toBe(true);
+    });
+
+    test('should handle alternative movement keys', () => {
+        const keys = {
+            'KeyA': true,
+            'Space': true
+        };
+
+        player.update(keys, canvasWidth, canvasHeight);
+        expect(player.velocityX).toBeLessThan(0);
+        expect(player.velocityY).toBeLessThan(0);
+        expect(player.direction).toBe('left');
+        expect(player.isJumping).toBe(true);
+    });
+
+    test('should apply friction when no movement keys are pressed', () => {
+        player.velocityX = 5;
+        player.update({}, canvasWidth, canvasHeight);
+        expect(player.velocityX).toBeLessThan(5);
+        expect(player.frame).toBe(0);
+        expect(player.frameTimer).toBe(0);
+    });
+
+    test('should cap falling speed', () => {
+        player.velocityY = 20;
+        player.update({}, canvasWidth, canvasHeight);
+        expect(player.velocityY).toBe(15);
+    });
+
+    test('should handle frame animation timing', () => {
+        player.frameTimer = player.frameDelay + 1;
+        player.frame = 0;
+        player.update({'ArrowRight': true}, canvasWidth, canvasHeight);
+        expect(player.frame).toBe(1);
+        expect(player.frameTimer).toBe(0);
+    });
+
+    test('should prevent double jump', () => {
+        const keys = {'ArrowUp': true};
+        player.isJumping = true;
+        player.update(keys, canvasWidth, canvasHeight);
+        expect(player.velocityY).toBeGreaterThan(0);
+    });
+
+    test('should handle character switch key release', () => {
+        player.lastKeyT = true;
+        player.update({'KeyT': false}, canvasWidth, canvasHeight);
+        expect(player.lastKeyT).toBe(false);
+        expect(player.characterType).toBe('pepe');
+    });
+
+    test('should reset frame animation when stopping movement', () => {
+        player.frameTimer = 5;
+        player.frame = 2;
+        player.update({}, canvasWidth, canvasHeight);
+        expect(player.frameTimer).toBe(0);
+        expect(player.frame).toBe(0);
+    });
+
+    test('should maintain direction when jumping', () => {
+        player.direction = 'left';
+        player.update({'Space': true}, canvasWidth, canvasHeight);
+        expect(player.direction).toBe('left');
+    });
+});
+
+describe('Player Damage and Movement Methods', () => {
+    let player;
+
+    beforeEach(() => {
+        player = new Player(100, 100);
+        global.playSound = jest.fn();
+    });
+
+    test('takeDamage should reduce health and make player invulnerable', () => {
+        const initialHealth = player.health;
+        const damage = 20;
+        const result = player.takeDamage(damage);
+
+        expect(player.health).toBe(initialHealth - damage);
+        expect(player.invulnerable).toBe(true);
+        expect(player.invulnerableTimer).toBe(0);
+        expect(result).toBe(false);
+    });
+
+    test('takeDamage should return true when health drops to zero or below', () => {
+        const result = player.takeDamage(player.health);
+        expect(result).toBe(true);
+    });
+
+    test('reset should restore player to initial state at new position', () => {
+        player.x = 50;
+        player.y = 50;
+        player.velocityX = 10;
+        player.velocityY = -5;
+        player.health = 30;
+
+        player.reset(200, 300);
+
+        expect(player.x).toBe(200);
+        expect(player.y).toBe(300);
+        expect(player.velocityX).toBe(0);
+        expect(player.velocityY).toBe(0);
+        expect(player.health).toBe(MAX_HEALTH);
+    });
+
+    test('should toggle character type when T key is pressed and released', () => {
+        expect(player.characterType).toBe('pepe');
+        player.lastKeyT = false;
+
+        player.update({'KeyT': true}, 800, 600);
+        expect(player.characterType).toBe('mario');
+        expect(player.lastKeyT).toBe(true);
+
+        player.update({'KeyT': false}, 800, 600);
+        expect(player.lastKeyT).toBe(false);
+
+        player.update({'KeyT': true}, 800, 600);
+        expect(player.characterType).toBe('pepe');
+    });
+
+    test('should apply gravity and cap falling speed', () => {
+        player.velocityY = 10;
+        player.update({}, 800, 600);
+
+        // Gravity should increase velocityY
+        expect(player.velocityY).toBe(10 + GRAVITY);
+
+        // Set velocityY to the just below cap
+        player.velocityY = 14.9;
+        player.update({}, 800, 600);
+
+        // Should be capped at 15
+        expect(player.velocityY).toBe(15);
+    });
+
+    test('should update position based on velocity', () => {
+        player.velocityX = 5;
+        player.velocityY = -3;
+        const initialX = player.x;
+
+        player.update({}, 800, 600);
+
+        expect(player.x).toBe(initialX + 4);
+        expect(player.y).toBe(97.5);
+
+    });
+
+    test('should prevent player from moving outside canvas boundaries', () => {
+        player.x = -5;
+        player.update({}, 800, 600);
+        expect(player.x).toBe(0);
+
+        player.x = 800;
+        player.update({}, 800, 600);
+        expect(player.x).toBe(800 - player.width);
+
+        player.y = 600;
+        player.isJumping = true;
+        player.update({}, 800, 600);
+        expect(player.y).toBe(600 - player.height);
+        expect(player.velocityY).toBe(0);
+        expect(player.isJumping).toBe(false);
     });
 });
 
