@@ -173,12 +173,12 @@ describe('Player Damage and Movement Methods', () => {
         player.velocityX = 5;
         player.velocityY = -3;
         const initialX = player.x;
-        const initialY = player.y;
 
         player.update({}, 800, 600);
 
         expect(player.x).toBe(initialX + 4);
         expect(player.y).toBe(97.5);
+
     });
 
     test('should prevent player from moving outside canvas boundaries', () => {
