@@ -1,4 +1,4 @@
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from '../../constants.js';
+import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from '../../constants';
 import { playSound } from './sound.js';
 
 /**
@@ -128,7 +128,7 @@ export default class Player {
       frameIndex = 5; // Hurt frame (6th frame)
     }
 
-    // Calculate the source position in the sprite sheet
+    // Calculate the classes position in the sprite sheet
     const sourceX = frameIndex * 32; // Each frame is 32px wide
     const sourceY = 0;
 

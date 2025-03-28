@@ -1,4 +1,4 @@
-import Particles from '../js/core/source/particles.js';
+import Particles from '../js/core/classes/particles.js';
 
 describe('Particles', () => {
     let particles;

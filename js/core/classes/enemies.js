@@ -56,7 +56,7 @@ export default class Enemy {
     const frameOffset = enemyType * 2; // 2 frames per enemy type
     const frameIndex = frameOffset + this.frame;
 
-    // Calculate the source position in the sprite sheet
+    // Calculate the classes position in the sprite sheet
     const sourceX = frameIndex * 32; // Each frame is 32px wide
     const sourceY = 0;
 
