@@ -1,4 +1,3 @@
-// First, mock the entire sound module
 jest.mock('../js/core/classes/sound.js', () => ({
   initSounds: jest.fn(),
   playSound: jest.fn(),
@@ -7,12 +6,10 @@ jest.mock('../js/core/classes/sound.js', () => ({
   sounds: {}
 }));
 
-// Then import the mocked module
-import { initSounds, playSound, stopSound, toggleMute, sounds } from '../js/core/classes/sound.js';
+import { initSounds, playSound, stopSound, toggleMute } from '../js/core/classes/sound.js';
 
 describe('Sound module', () => {
     beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
     });
 
