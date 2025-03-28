@@ -27,16 +27,9 @@ jobs:
         run: npm run test
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
-          directory: ./coverage/
-          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: AlbertoBarrago/mario-murru-game
 
-      - name: Commit coverage badges
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          find . -name "*.svg" | xargs git add || echo "No SVG files found"
-          git commit -m "docs: update coverage badges" || echo "No changes to commit"
-          git push || echo "Nothing to push"
+
