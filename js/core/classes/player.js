@@ -191,4 +191,32 @@ export default class Player {
     this.velocityY = 0;
     this.health = MAX_HEALTH;
   }
+
+  /**
+   * Pauses the player's animation state
+   */
+  pauseAnimation() {
+    this.savedState = {
+      velocityX: this.velocityX,
+      velocityY: this.velocityY,
+      frameTimer: this.frameTimer,
+      frame: this.frame
+    };
+    this.velocityX = 0;
+    this.velocityY = 0;
+    this.frameTimer = 0;
+  }
+
+  /**
+   * Resumes the player's animation state
+   */
+  resumeAnimation() {
+    if (this.savedState) {
+      this.velocityX = this.savedState.velocityX;
+      this.velocityY = this.savedState.velocityY;
+      this.frameTimer = this.savedState.frameTimer;
+      this.frame = this.savedState.frame;
+      this.savedState = null;
+    }
+  }
 }

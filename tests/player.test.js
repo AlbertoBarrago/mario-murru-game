@@ -1,5 +1,5 @@
 import Player from '../js/core/classes/player.js';
-import {GRAVITY, MAX_HEALTH} from "../js/constants";
+import { GRAVITY, MAX_HEALTH } from "../js/constants";
 
 jest.mock('../js/core/classes/sound.js', () => ({
     playSound: jest.fn(),
@@ -115,39 +115,55 @@ describe('Player', () => {
         expect(player.invulnerable).toBe(false); // Player should become invulnerable
     });
 
-    test('should render player correctly', () => {
+    test('should render player correctly with different states and frame indices', () => {
         const ctx = {
             drawImage: jest.fn(),
             fillStyle: '',
-            fillRect: jest.fn()
+            fillRect: jest.fn(),
+            beginPath: jest.fn(),
+            arc: jest.fn(),
+            stroke: jest.fn(),
+            globalAlpha: 1.0
         };
 
-        const spriteSheet = {
-            width: 128,
-            height: 128
-        };
+        // Test jumping state (frame index 3)
+        player.isJumping = true;
+        player.render(ctx);
+        expect(ctx.drawImage).toHaveBeenCalledWith(
+            expect.any(Image),
+            3 * 32, 0, 32, 32,
+            player.x, player.y, player.width, player.height
+        );
 
-        player.render(ctx, spriteSheet);
-        expect(ctx.drawImage).toHaveBeenCalled();
-
-        player.invulnerable = true;
-        player.invulnerableTimer = 10; // Even number to test flashing
-        player.render(ctx, spriteSheet);
-
-        player.invulnerableTimer = 11; // Odd number
-        player.render(ctx, spriteSheet);
-
-        player.characterType = 'mario';
-        player.render(ctx, spriteSheet);
-
+        // Test left-facing idle state (frame index 4)
+        player.isJumping = false;
         player.direction = 'left';
-        player.render(ctx, spriteSheet);
+        player.velocityX = 0;
+        player.render(ctx);
+        expect(ctx.drawImage).toHaveBeenCalledWith(
+            expect.any(Image),
+            4 * 32, 0, 32, 32,
+            player.x, player.y, player.width, player.height
+        );
+
+        // Test invulnerable state (frame index 5)
+        player.invulnerable = true;
+        const originalDateNow = Date.now;
+        Date.now = jest.fn(() => 1000);
+        player.render(ctx);
+        expect(ctx.drawImage).toHaveBeenCalledWith(
+            expect.any(Image),
+            5 * 32, 0, 32, 32,
+            player.x, player.y, player.width, player.height
+        );
+        expect(ctx.globalAlpha).toBe(1);
+        Date.now = originalDateNow;
     });
 
     test('should handle character type switching', () => {
         expect(player.characterType).toBe('pepe');
 
-        const keys = {'KeyT': true};
+        const keys = { 'KeyT': true };
         player.update(keys, canvasWidth, canvasHeight);
 
         expect(player.characterType).toBe('mario');
@@ -183,6 +199,48 @@ describe('Player', () => {
         player.takeDamage(player.health);
 
         expect(player.lives).toBe(0);
+    });
+
+    test('should pause and resume animation state', () => {
+        player.velocityX = 5;
+        player.velocityY = -3;
+        player.frameTimer = 10;
+        player.frame = 2;
+
+        player.pauseAnimation();
+
+        expect(player.savedState).toEqual({
+            velocityX: 5,
+            velocityY: -3,
+            frameTimer: 10,
+            frame: 2
+        });
+        expect(player.velocityX).toBe(0);
+        expect(player.velocityY).toBe(0);
+        expect(player.frameTimer).toBe(0);
+
+        player.resumeAnimation();
+
+        expect(player.velocityX).toBe(5);
+        expect(player.velocityY).toBe(-3);
+        expect(player.frameTimer).toBe(10);
+        expect(player.frame).toBe(2);
+        expect(player.savedState).toBeNull();
+    });
+
+    test('should handle resume animation without saved state', () => {
+        player.velocityX = 5;
+        player.velocityY = -3;
+        player.frameTimer = 10;
+        player.frame = 2;
+        player.savedState = null;
+
+        player.resumeAnimation();
+
+        expect(player.velocityX).toBe(5);
+        expect(player.velocityY).toBe(-3);
+        expect(player.frameTimer).toBe(10);
+        expect(player.frame).toBe(2);
     });
 });
 
@@ -239,13 +297,13 @@ describe('Player Update Method', () => {
     test('should handle frame animation timing', () => {
         player.frameTimer = player.frameDelay + 1;
         player.frame = 0;
-        player.update({'ArrowRight': true}, canvasWidth, canvasHeight);
+        player.update({ 'ArrowRight': true }, canvasWidth, canvasHeight);
         expect(player.frame).toBe(1);
         expect(player.frameTimer).toBe(0);
     });
 
     test('should prevent double jump', () => {
-        const keys = {'ArrowUp': true};
+        const keys = { 'ArrowUp': true };
         player.isJumping = true;
         player.update(keys, canvasWidth, canvasHeight);
         expect(player.velocityY).toBeGreaterThan(0);
@@ -253,7 +311,7 @@ describe('Player Update Method', () => {
 
     test('should handle character switch key release', () => {
         player.lastKeyT = true;
-        player.update({'KeyT': false}, canvasWidth, canvasHeight);
+        player.update({ 'KeyT': false }, canvasWidth, canvasHeight);
         expect(player.lastKeyT).toBe(false);
         expect(player.characterType).toBe('pepe');
     });
@@ -268,7 +326,7 @@ describe('Player Update Method', () => {
 
     test('should maintain direction when jumping', () => {
         player.direction = 'left';
-        player.update({'Space': true}, canvasWidth, canvasHeight);
+        player.update({ 'Space': true }, canvasWidth, canvasHeight);
         expect(player.direction).toBe('left');
     });
 });
@@ -317,14 +375,14 @@ describe('Player Damage and Movement Methods', () => {
         expect(player.characterType).toBe('pepe');
         player.lastKeyT = false;
 
-        player.update({'KeyT': true}, 800, 600);
+        player.update({ 'KeyT': true }, 800, 600);
         expect(player.characterType).toBe('mario');
         expect(player.lastKeyT).toBe(true);
 
-        player.update({'KeyT': false}, 800, 600);
+        player.update({ 'KeyT': false }, 800, 600);
         expect(player.lastKeyT).toBe(false);
 
-        player.update({'KeyT': true}, 800, 600);
+        player.update({ 'KeyT': true }, 800, 600);
         expect(player.characterType).toBe('pepe');
     });
 
@@ -470,6 +528,75 @@ describe('Player Rendering', () => {
         player.render(marioCtx);
 
         expect(marioCtx.fillRectCalls[0].fillStyle).toBe('#FFC0CB');
+    });
+});
+
+describe('Player Frame Index Selection', () => {
+    let player;
+    let mockContext;
+
+    beforeEach(() => {
+        player = new Player(100, 100);
+        mockContext = {
+            fillStyle: '',
+            fillRect: jest.fn(),
+            beginPath: jest.fn(),
+            arc: jest.fn(),
+            stroke: jest.fn(),
+            drawImage: jest.fn(),
+            globalAlpha: 1.0
+        };
+    });
+
+    test('should select frame index 3 when jumping', () => {
+        player.isJumping = true;
+        player.velocityX = 0;
+        player.frame = 1; // This should be ignored when jumping
+
+        player.render(mockContext);
+
+        // Check if drawImage was called with the correct frame index (3 * 32 for x-coordinate)
+        expect(mockContext.drawImage).toHaveBeenCalledWith(
+            expect.any(Object), // Image object
+            3 * 32, 0, 32, 32, // Source coordinates (frame 3)
+            player.x, player.y, player.width, player.height // Destination coordinates
+        );
+    });
+
+    test('should select frame index based on animation frame when walking', () => {
+        player.isJumping = false;
+        player.velocityX = 5; // Moving right
+
+        // Test with different animation frames
+        for (let i = 0; i < player.frameCount; i++) {
+            player.frame = i;
+            mockContext.drawImage.mockClear();
+
+            player.render(mockContext);
+
+            // When walking, frameIndex should be player.frame + 1
+            expect(mockContext.drawImage).toHaveBeenCalledWith(
+                expect.any(Object), // Image object
+                (i + 1) * 32, 0, 32, 32, // Source coordinates (frame i+1)
+                player.x, player.y, player.width, player.height // Destination coordinates
+            );
+        }
+    });
+
+    test('should select frame index 0 when idle', () => {
+        player.isJumping = false;
+        player.velocityX = 0; // Not moving
+        player.direction = 'right'; // Facing right
+        player.frame = 2; // This should be ignored when idle
+
+        player.render(mockContext);
+
+        // When idle and facing right, frameIndex should be 0
+        expect(mockContext.drawImage).toHaveBeenCalledWith(
+            expect.any(Object), // Image object
+            0 * 32, 0, 32, 32, // Source coordinates (frame 0)
+            player.x, player.y, player.width, player.height // Destination coordinates
+        );
     });
 });
 

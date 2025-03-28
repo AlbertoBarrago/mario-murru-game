@@ -21,6 +21,7 @@ Mario Murru is a 2D platformer where you control the hero, Mario Murru, as he ju
    - Left Arrow / A: Move left
    - Right Arrow / D: Move right
    - Up Arrow / W / Space: Jump
+   - P: to pause the game
 3. Jump on enemies to defeat them
 4. Collect all the coins to win
 

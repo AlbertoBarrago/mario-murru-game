@@ -60,6 +60,39 @@ export default class ParticleSystem {
      */
   constructor() {
     this.particles = [];
+    this.isPaused = false;
+    this.savedParticles = null;
+  }
+
+  /**
+   * Pauses the particle system
+   */
+  pause() {
+    this.isPaused = true;
+    this.savedParticles = this.particles.map(particle => ({
+      velocityX: particle.velocityX,
+      velocityY: particle.velocityY
+    }));
+    this.particles.forEach(particle => {
+      particle.velocityX = 0;
+      particle.velocityY = 0;
+    });
+  }
+
+  /**
+   * Resumes the particle system
+   */
+  resume() {
+    this.isPaused = false;
+    if (this.savedParticles) {
+      this.particles.forEach((particle, index) => {
+        if (this.savedParticles[index]) {
+          particle.velocityX = this.savedParticles[index].velocityX;
+          particle.velocityY = this.savedParticles[index].velocityY;
+        }
+      });
+      this.savedParticles = null;
+    }
   }
 
   /**
@@ -104,16 +137,18 @@ export default class ParticleSystem {
      * Updates all particles
      */
   update() {
-    // Update explosion particles
-    this.particles = this.particles.filter(particle => particle.update());
+    if (!this.isPaused) {
+      // Update explosion particles
+      this.particles = this.particles.filter(particle => particle.update());
 
-    // Update score popups
-    if (this.scorePopups) {
-      this.scorePopups = this.scorePopups.filter(popup => {
-        popup.y += popup.velocityY;
-        popup.life--;
-        return popup.life > 0;
-      });
+      // Update score popups
+      if (this.scorePopups) {
+        this.scorePopups = this.scorePopups.filter(popup => {
+          popup.y += popup.velocityY;
+          popup.life--;
+          return popup.life > 0;
+        });
+      }
     }
   }
 
