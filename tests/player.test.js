@@ -1,7 +1,7 @@
-import Player from '../js/core/source/player.js';
+import Player from '../js/core/classes/player.js';
 
 // Mock the sound module
-jest.mock('../js/core/source/sound.js', () => ({
+jest.mock('../js/core/classes/sound.js', () => ({
     playSound: jest.fn(),
     stopSound: jest.fn(),
     toggleMute: jest.fn(),
@@ -19,14 +19,12 @@ describe('Player', () => {
         jest.clearAllMocks();
     });
 
-    // Test lines 43-45, 47-49 (likely constructor and initialization)
     test('should initialize with custom position', () => {
         const customPlayer = new Player(200, 300);
         expect(customPlayer.x).toBe(200);
         expect(customPlayer.y).toBe(300);
     });
 
-    // Test lines 57-59, 63 (likely related to movement and input handling)
     test('should handle multiple input keys simultaneously', () => {
         const keys = {
             'ArrowLeft': true,
@@ -35,31 +33,25 @@ describe('Player', () => {
 
         player.update(keys, canvasWidth, canvasHeight);
 
-        // Should be moving left and jumping
         expect(player.velocityX).toBeLessThan(0);
         expect(player.velocityY).toBeLessThan(0);
         expect(player.direction).toBe('left');
         expect(player.isJumping).toBe(true);
     });
 
-    // Test lines 86-87 (likely related to invulnerability)
     test('should handle invulnerability timer', () => {
         player.invulnerable = true;
         player.invulnerableTimer = 0;
 
-        // Update player to increment invulnerability timer
         player.update({}, canvasWidth, canvasHeight);
         expect(player.invulnerableTimer).toBe(1);
 
-        // Set timer to almost expire
         player.invulnerableTimer = 59; // Assuming 60 is the threshold
         player.update({}, canvasWidth, canvasHeight);
 
-        // Invulnerability should be turned off
         expect(player.invulnerable).toBe(false);
     });
 
-    // Test lines 115, 118, 123 (likely related to collision detection)
     test('should handle boundary collisions', () => {
         // Test left boundary
         player.x = -10;
@@ -71,7 +63,7 @@ describe('Player', () => {
         player.update({}, canvasWidth, canvasHeight);
         expect(player.x).toBe(canvasWidth - player.width);
 
-        // Test bottom boundary (falling off screen)
+        // Test bottom boundary (falling off-screen)
         player.y = canvasHeight + 100;
         player.update({}, canvasWidth, canvasHeight);
 
@@ -79,7 +71,6 @@ describe('Player', () => {
         expect(player.y).toBeLessThan(canvasHeight);
     });
 
-    // Test lines 142-163 (likely related to enemy and platform collisions)
     test('should handle platform collisions from different directions', () => {
         const platform = {
             x: 90,
@@ -134,7 +125,6 @@ describe('Player', () => {
         expect(player.invulnerable).toBe(false); // Player should become invulnerable
     });
 
-    // Test lines 175-192 (likely related to rendering)
     test('should render player correctly', () => {
         const ctx = {
             drawImage: jest.fn(),

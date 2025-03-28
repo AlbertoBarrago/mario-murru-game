@@ -1,5 +1,5 @@
 // First, mock the entire sound module
-jest.mock('../js/core/source/sound.js', () => ({
+jest.mock('../js/core/classes/sound.js', () => ({
   initSounds: jest.fn(),
   playSound: jest.fn(),
   stopSound: jest.fn(),
@@ -8,7 +8,7 @@ jest.mock('../js/core/source/sound.js', () => ({
 }));
 
 // Then import the mocked module
-import { initSounds, playSound, stopSound, toggleMute, sounds } from '../js/core/source/sound.js';
+import { initSounds, playSound, stopSound, toggleMute, sounds } from '../js/core/classes/sound.js';
 
 describe('Sound module', () => {
     beforeEach(() => {

@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} Assets
  * @property {Object.<string, HTMLImageElement>} images - Collection of loaded game images
- * @property {Object.<string, AudioElement>} sounds - Collection of loaded game sounds
+ * @property {Object.<string, HTMLAudioElement>} sounds - Collection of loaded game sounds
  * @property {number} loaded - Counter for loaded assets
  * @property {number} total - Total number of assets to load
  */
@@ -20,11 +20,6 @@ const assets = {
  */
 function loadAssets() {
   const imagesToLoad = [
-    { name: 'player', src: 'assets/images/mario-murru.png' },
-    { name: 'tiles', src: 'assets/images/tiles.png' },
-    { name: 'enemies', src: 'assets/images/enemies.png' },
-    { name: 'coin', src: 'assets/images/coin.png' },
-    { name: 'background', src: 'assets/images/background.png' },
     { name: 'mario', src: 'assets/images/sprites/mario.svg' },
     { name: 'pepe', src: 'assets/images/sprites/pepe.svg' },
     { name: 'enemies_sprite', src: 'assets/images/sprites/enemies.svg' }

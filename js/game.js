@@ -1,9 +1,9 @@
 // Import modules
 import '../css/style.css';
-import { INITIAL_LIVES, ENEMY_DAMAGE, COIN_SCORE, JUMP_FORCE } from './constants.js';
-import { loadAssets, checkAssetsLoaded } from './assets/index.js';
-import { sounds, playSound, stopSound, toggleMute, initSounds } from './core/source/sound.js';
-import { ParticleSystem, Enemy, Coin, Player } from './core';
+import {COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE} from './constants';
+import {checkAssetsLoaded, loadAssets} from './assets';
+import {initSounds, playSound, sounds, stopSound, toggleMute} from './core/classes/sound.js';
+import {Coin, Enemy, ParticleSystem, Player} from './core';
 /**
  * @typedef {Object} GameState
  * @property {boolean} loaded - Whether game assets are loaded
@@ -117,8 +117,8 @@ function init() {
   window.gameRunning = false;
 
   window.startGame = function () {
-    gameStarted = true;
-    gameRunning = true;
+    window.gameStarted = true;
+    window.gameRunning = true;
   };
 
   checkAssetsLoaded(
@@ -179,7 +179,6 @@ function setupGame() {
 /**
  * Main game loop
  * @function gameLoop
- * @param {number} timestamp - Current timestamp
  */
 function gameLoop() {
   if (!gameLoaded) return;
@@ -191,7 +190,7 @@ function gameLoop() {
   } else if (gameOver) {
     renderGameOver();
   } else {
-    gameRunning = true;
+    window.gameRunning = true;
 
     if (sounds.backgroundMusic.paused) {
       playSound('backgroundMusic');
@@ -402,7 +401,7 @@ function renderGameOver() {
 }
 
 /**
- * Check if level is complete
+ * Check if the level is complete
  * @function checkLevelComplete
  */
 function checkLevelComplete() {
@@ -446,8 +445,7 @@ function loadNextLevel() {
   }
 
   // Add more enemies based on level
-  const enemyCount = currentLevel;
-  for (let i = 0; i < enemyCount; i++) {
+  for (let i = 0; i < currentLevel; i++) {
     const speed = 1 + Math.random() * currentLevel;
     enemies.push(new Enemy(
       100 + Math.random() * (canvas.width - 200),
@@ -509,8 +507,8 @@ function quitGame() {
     stopSound('backgroundMusic');
 
     if (confirm('Are you sure you want to quit the game?')) {
-      gameStarted = false;
-      gameRunning = false;
+      window.gameStarted = false;
+      window.gameRunning = false;
       document.getElementById('startScreen').style.display = 'block';
       console.warn('Game quit by user');
     } else {
