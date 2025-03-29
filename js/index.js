@@ -95,11 +95,9 @@ function startGame() {
  * @function render
  */
 function init() {
-  console.log('Initializing game...');
 
   try {
     initSounds();
-    console.log('Sound system initialized');
   } catch (error) {
     console.error('Failed to initialize sounds:', error);
   }
@@ -161,7 +159,6 @@ function init() {
 
     // Fix the Q key handling - make sure it's properly detected
     if (e.code === 'KeyQ' && gameStarted && !gameOver) {
-      console.log('Q key pressed - quitting game');
       quitGame();
     }
 
@@ -619,9 +616,7 @@ function restartGame() {
  * @function quitGame
  */
 function quitGame() {
-  console.log('quitGame function called');
   if (gameStarted && !gameOver) {
-    // Pause the game while confirming
     const wasPaused = gamePaused;
     if (!wasPaused) {
       gamePaused = true;
@@ -632,7 +627,6 @@ function quitGame() {
 
     // Ask for confirmation
     if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
-      console.log('Quit confirmed');
       stopSound('backgroundMusic');
 
       // Reset game state completely
@@ -656,8 +650,6 @@ function quitGame() {
         startScreen.style.display = 'flex';
       }
     } else {
-      console.log('Quit cancelled');
-      // If user cancels, resume the game if it wasn't paused before
       if (!wasPaused) {
         gamePaused = false;
         if (sounds.backgroundMusic) {
