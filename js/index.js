@@ -90,10 +90,13 @@ function startGame() {
   playSound('backgroundMusic');
 }
 
+/**
+ * Render the game
+ * @function render
+ */
 function init() {
   console.log('Initializing game...');
 
-  // Initialize sound system
   try {
     initSounds();
     console.log('Sound system initialized');
@@ -238,7 +241,7 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Synchronize game state with window object
+  // Synchronize game state with a window object
   gameStarted = window.gameStarted;
   gameRunning = window.gameRunning;
 
@@ -538,7 +541,7 @@ function loadNextLevel() {
   enemies = [];
   coins = [];
 
-  // Add ground platform
+  // Add a ground platform
   platforms.push({
     x: 0,
     y: 450,
