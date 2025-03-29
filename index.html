@@ -13,7 +13,7 @@
     <div id="game-container">
         <canvas id="gameCanvas" width="800" height="480"></canvas>
         <div id="loading">Loading game assets...</div>
-        <div id="start-screen">
+        <div id="startScreen">
             <h1>MARIO MURRU</h1>
             <p>Use Arrow Keys or WASD to move<br>Space to jump</p>
             <p class="blink">PRESS ENTER TO START</p>
@@ -24,24 +24,25 @@
             Press T to toggle character style (Human/Pepe)<br>
             Press R to restart game when game over<br>
             Press P to pause game<br>
-            Press M to toggle sound
+            Press M to toggle sound<br>
             Press Q to quit game
         </div>
     </div>
     <script>
         window.addEventListener('load', function () {
             document.getElementById('start-button').addEventListener('click', function () {
-                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'none';
                 document.getElementById('instructions').style.display = 'block';
                 setTimeout(function () {
                     document.getElementById('instructions').style.display = 'none';
-                }, 5000);
+                }, 2000);
 
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 if (audioContext.state === 'suspended') {
                     audioContext.resume();
                 }
 
+                window.gameStarted = true;
                 if (window.startGame) {
                     window.startGame();
                 }

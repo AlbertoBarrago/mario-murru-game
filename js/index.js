@@ -73,32 +73,9 @@ let healthBar = {
   borderWidth: 2
 };
 
-/** @type {UIElement} - Lives display UI element */
-let livesDisplay = {
-  x: 20,
-  y: 60,
-  spacing: 25
-};
-
-/** @type {UIElement} - Level display UI element */
-let levelDisplay = {
-  x: canvas.width - 100,
-  y: 30
-};
-
-/** @type {UIElement} - Score display UI element */
-let scoreDisplay = {
-  x: canvas.width - 100,
-  y: 60
-};
-
 /** @type {Object.<string, boolean>} - Keyboard input state */
 const keys = {};
 
-/**
- * Initialize the game
- * @function init
- */
 /**
  * Start the game
  * @function startGame
@@ -113,30 +90,45 @@ function startGame() {
   playSound('backgroundMusic');
 }
 
+/**
+ * Render the game
+ * @function render
+ */
 function init() {
-  initSounds();
-  loadAssets();
 
+  try {
+    initSounds();
+  } catch (error) {
+    console.error('Failed to initialize sounds:', error);
+  }
+
+  // Get canvas element
+  if (!canvas) {
+    console.error('Canvas element not found!');
+    return;
+  }
+
+  // Set up event listeners
   window.addEventListener('keydown', (e) => {
-    keys[e.code] = true;
-
     if (e.code === 'KeyM') {
       toggleMute();
     }
 
-    if (e.code === 'KeyQ') {
-      quitGame();
-    }
-  });
-
-  window.addEventListener('keyup', (e) => {
-    keys[e.code] = false;
-  });
-
-  window.addEventListener('keydown', (e) => {
+    // Add Enter key handling to start the game from main menu
     if (e.code === 'Enter' && !gameStarted) {
+      // Hide the start screen if it exists
+      const startScreen = document.getElementById('startScreen');
+      if (startScreen) {
+        startScreen.style.display = 'none';
+      }
+
+      // Start the game
       startGame();
     }
+
+    // Handle other key presses
+    keys[e.code] = true;
+
     if (e.code === 'KeyP' && gameStarted && !pauseTransitioning) {
       const now = Date.now();
       if (now - lastPauseChange > 300) { // Prevent rapid pause toggling
@@ -164,18 +156,31 @@ function init() {
         }, 100);
       }
     }
+
+    // Fix the Q key handling - make sure it's properly detected
+    if (e.code === 'KeyQ' && gameStarted && !gameOver) {
+      quitGame();
+    }
+
+    if (e.code === 'KeyR' && gameOver) {
+      restartGame();
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
   });
 
   window.gameStarted = false;
   window.gameRunning = false;
 
-  checkAssetsLoaded(
-    () => {
-      gameLoaded = true;
-      setupGame();
-      requestAnimationFrame(gameLoop);
-    }
-  );
+  // Load assets and start game when ready
+  loadAssets();
+  checkAssetsLoaded(() => {
+    gameLoaded = true;
+    setupGame();
+    requestAnimationFrame(gameLoop);
+  });
 }
 
 /**
@@ -233,7 +238,7 @@ function gameLoop() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Synchronize game state with window object
+  // Synchronize game state with a window object
   gameStarted = window.gameStarted;
   gameRunning = window.gameRunning;
 
@@ -322,9 +327,9 @@ function checkCollisions() {
 
   platforms.forEach(platform => {
     const overlapX = Math.min(player.x + player.width, platform.x + platform.width) -
-            Math.max(player.x, platform.x);
+      Math.max(player.x, platform.x);
     const overlapY = Math.min(player.y + player.height, platform.y + platform.height) -
-            Math.max(player.y, platform.y);
+      Math.max(player.y, platform.y);
 
     if (overlapX > 0 && overlapY > 0) {
       if (overlapX < overlapY) {
@@ -354,9 +359,9 @@ function checkCollisions() {
 
   enemies.forEach((enemy, index) => {
     if (player.x + player.width > enemy.x &&
-            player.x < enemy.x + enemy.width &&
-            player.y + player.height > enemy.y &&
-            player.y < enemy.y + enemy.height) {
+      player.x < enemy.x + enemy.width &&
+      player.y + player.height > enemy.y &&
+      player.y < enemy.y + enemy.height) {
 
       if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height / 2) {
         // Create explosion effect at enemy position
@@ -394,10 +399,10 @@ function checkCollisions() {
 
   coins.forEach(coin => {
     if (!coin.collected &&
-            player.x + player.width > coin.x &&
-            player.x < coin.x + coin.width &&
-            player.y + player.height > coin.y &&
-            player.y < coin.y + coin.height) {
+      player.x + player.width > coin.x &&
+      player.x < coin.x + coin.width &&
+      player.y + player.height > coin.y &&
+      player.y < coin.y + coin.height) {
 
       coin.collected = true;
       score += COIN_SCORE;
@@ -432,7 +437,8 @@ function render() {
  * @function renderUI
  */
 function renderUI() {
-  // Health bar border
+  // Health bar with improved styling
+  // Border
   ctx.fillStyle = '#000';
   ctx.fillRect(
     healthBar.x - healthBar.borderWidth,
@@ -441,34 +447,44 @@ function renderUI() {
     healthBar.height + healthBar.borderWidth * 2
   );
 
-  // Health bar background
-  ctx.fillStyle = '#fff';
+  // Background
+  ctx.fillStyle = '#000';
   ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
 
-  // Health amount
+  // Health amount with bright green color
   const healthWidth = (player.health / 100) * healthBar.width;
-  ctx.fillStyle = player.health > 30 ? '#0f0' : '#f00';
+  ctx.fillStyle = '#00ff00';
   ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
 
-  // Health text
-  ctx.fillStyle = '#000';
-  ctx.font = '12px Arial';
-  ctx.fillText(`HP: ${player.health}/100`, healthBar.x + 5, healthBar.y + 12);
+  // Health text - centered in the bar
+  ctx.fillStyle = '#fff';
+  ctx.font = '10px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText(`HP: ${player.health}/100`, healthBar.x + healthBar.width / 2, healthBar.y + 11);
+  ctx.textAlign = 'left'; // Reset text alignment
 
-  // Lives
-  ctx.fillStyle = '#f00';
-  ctx.font = '16px Arial';
-  ctx.fillText(`Lives: ${player.lives}`, livesDisplay.x, livesDisplay.y);
+  // Lives with heart icons in line with HP bar
+  ctx.fillStyle = '#ff0000';
+  for (let i = 0; i < player.lives; i++) {
+    // Draw heart shape
+    const heartX = healthBar.x + healthBar.width + 30 + i * 25;
+    const heartY = healthBar.y + healthBar.height / 2 - 10;
 
-  // Level
-  ctx.fillStyle = '#000';
-  ctx.font = '16px Arial';
-  ctx.fillText(`Level: ${currentLevel}`, levelDisplay.x, levelDisplay.y);
+    // Heart shape
+    ctx.beginPath();
+    ctx.moveTo(heartX, heartY + 5);
+    ctx.bezierCurveTo(heartX, heartY, heartX - 5, heartY, heartX - 5, heartY + 5);
+    ctx.bezierCurveTo(heartX - 5, heartY + 10, heartX, heartY + 15, heartX, heartY + 20);
+    ctx.bezierCurveTo(heartX, heartY + 15, heartX + 5, heartY + 10, heartX + 5, heartY + 5);
+    ctx.bezierCurveTo(heartX + 5, heartY, heartX, heartY, heartX, heartY + 5);
+    ctx.fill();
+  }
 
-  // Score
+  // Level and score on the same line
   ctx.fillStyle = '#000';
-  ctx.font = '16px Arial';
-  ctx.fillText(`Score: ${score}`, scoreDisplay.x, scoreDisplay.y);
+  ctx.font = '14px "Press Start 2P"';
+  ctx.fillText(`Level: ${currentLevel}`, canvas.width - 300, healthBar.y + 11);
+  ctx.fillText(`Score: ${score}`, canvas.width - 150, healthBar.y + 11);
 }
 
 /**
@@ -522,7 +538,7 @@ function loadNextLevel() {
   enemies = [];
   coins = [];
 
-  // Add ground platform
+  // Add a ground platform
   platforms.push({
     x: 0,
     y: 450,
@@ -567,9 +583,9 @@ function loadNextLevel() {
 
       for (const platform of platforms) {
         if (coinX + 16 > platform.x &&
-                    coinX < platform.x + platform.width &&
-                    coinY + 16 > platform.y &&
-                    coinY < platform.y + platform.height) {
+          coinX < platform.x + platform.width &&
+          coinY + 16 > platform.y &&
+          coinY < platform.y + platform.height) {
           validPosition = false;
           break;
         }
@@ -601,16 +617,46 @@ function restartGame() {
  */
 function quitGame() {
   if (gameStarted && !gameOver) {
-    stopSound('backgroundMusic');
+    const wasPaused = gamePaused;
+    if (!wasPaused) {
+      gamePaused = true;
+      if (sounds.backgroundMusic) {
+        sounds.backgroundMusic.pause();
+      }
+    }
 
-    if (confirm('Are you sure you want to quit the game?')) {
+    // Ask for confirmation
+    if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+      stopSound('backgroundMusic');
+
+      // Reset game state completely
+      gameStarted = false;
       window.gameStarted = false;
       window.gameRunning = false;
-      document.getElementById('startScreen').style.display = 'block';
-      console.warn('Game quit by user');
+
+      // Reset score and level
+      score = 0;
+      currentLevel = 1;
+
+      // Clear existing enemies and reset game
+      enemies = [];
+      coins = [];
+      platforms = [];
+      setupGame();
+
+      // Show the start screen again
+      const startScreen = document.getElementById('startScreen');
+      if (startScreen) {
+        startScreen.style.display = 'flex';
+      }
     } else {
-      if (!sounds.backgroundMusic.paused) {
-        playSound('backgroundMusic');
+      if (!wasPaused) {
+        gamePaused = false;
+        if (sounds.backgroundMusic) {
+          sounds.backgroundMusic.play().catch(error => {
+            console.warn('Failed to resume background music:', error);
+          });
+        }
       }
     }
   }

@@ -1,108 +1,134 @@
 body {
     margin: 0;
     padding: 0;
+    font-family: 'Press Start 2P', cursive;
+    background-color: #222;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #87CEEB;
-    overflow: hidden;
-    font-family: 'Press Start 2P', Arial, sans-serif;
 }
 
 #game-container {
     position: relative;
+    width: 800px;
+    height: 480px;
 }
 
-canvas {
-    border: 2px solid #000;
+#gameCanvas {
+    display: block;
     background-color: #5c94fc;
-    max-width: 100%;
-    max-height: 100%;
+    border: 4px solid #333;
 }
 
 #loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-#instructions {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    color: white;
-    font-size: 12px;
-    text-shadow: 1px 1px 1px black;
-}
-
-#start-screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    z-index: 20;
+}
+
+#startScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 10;
-}
-
-#start-screen h1 {
-    color: #FFD700;
-    font-size: 48px;
-    margin-bottom: 20px;
-    text-shadow: 3px 3px 0 #ff0000;
-}
-
-#start-screen p {
-    color: white;
-    font-size: 24px;
-    margin-bottom: 30px;
     text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#startScreen h1 {
+    font-size: 36px;
+    color: #e7a61a;
+    text-shadow: 3px 3px 0 #d35400;
+    margin-bottom: 30px;
+}
+
+#startScreen p {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#startScreen .blink {
+    animation: blink 1s infinite;
+    color: #e74c3c;
+    font-size: 18px;
+    margin-top: 30px;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 #start-button {
-    background-color: #ff0000;
+    margin-top: 20px;
+    background-color: #e74c3c;
     color: white;
     border: none;
     padding: 10px 20px;
-    font-size: 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
     cursor: pointer;
-    border-radius: 5px;
-    font-family: 'Press Start 2P', Arial, sans-serif;
-    box-shadow: 0 5px 0 #990000;
-    transition: all 0.1s;
-    z-index: 20;
+    border: 3px solid white;
+    transition: all 0.3s;
 }
 
 #start-button:hover {
-    transform: translateY(2px);
-    box-shadow: 0 3px 0 #990000;
+    background-color: #c0392b;
+    transform: scale(1.05);
 }
 
-#start-button:active {
-    transform: translateY(5px);
-    box-shadow: none;
+#instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+    z-index: 5;
 }
 
-.blink {
-    animation: blink-animation 1s steps(5, start) infinite;
-}
 
-@keyframes blink-animation {
-    to {
-        visibility: hidden;
-    }
+canvas {
+    font-smooth: never;
+    -webkit-font-smoothing: none;
 }
 
 @font-face {
     font-family: 'Press Start 2P';
+    font-display: swap;
     src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 }
