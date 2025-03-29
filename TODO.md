@@ -1,6 +1,2 @@
 - [ ] Add leader board
-- [ ] Store high score in simple sql database
-- [ ] Add monsters to jump on
-- [x] Add score
-- [x] Add lives
-- [x] Add game over
+- [ ] Craete db for high scores
