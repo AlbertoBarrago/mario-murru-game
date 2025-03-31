@@ -1,8 +1,7 @@
-import { playSound, sounds, stopSound } from '../core/classes/sound.js';
-import { COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE } from '../constants';
-import { Coin, Enemy, ParticleSystem, Player } from '../core';
+import { playSound, sounds, stopSound } from '../classes/sound.js';
+import { COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE } from '../../constants';
+import { Coin, Enemy, ParticleSystem, Player } from '../index';
 
-// Game state object to hold all game variables
 const gameState = {
   loaded: false,
   started: false,
@@ -83,7 +82,6 @@ export function setupGame() {
     height: 30
   });
 
-  // Platforms
   gameState.platforms.push({
     x: 200,
     y: 350,
@@ -125,7 +123,6 @@ export function togglePause() {
   gameState.paused = !gameState.paused;
   gameState.lastPauseChange = now;
 
-  // Update window property if needed
   if (window) {
     window.gamePaused = gameState.paused;
   }
@@ -217,7 +214,6 @@ export function checkCollisions() {
           ['#ff0000', '#ff7700', '#ffff00', '#ff00ff']
         );
 
-        // Create score popup
         gameState.particleSystem.createScorePopup(enemy.x + enemy.width / 2, enemy.y, 20);
 
         // Remove enemy

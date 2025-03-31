@@ -12,14 +12,13 @@ import {
   togglePause,
   restartGame,
   quitGame
-} from './services/game.js';
+} from './core/services/game.js';
 
 const canvas = document.getElementById('gameCanvas');
 if (!canvas) {
   console.error('Canvas element not found!');
 }
 
-// Initialize game state
 const gameState = initGameState(canvas);
 
 /**
@@ -49,7 +48,6 @@ function setupEventListeners() {
   window.addEventListener('keydown', (e) => {
     gameState.keys[e.code] = true;
 
-    // Toggle mute
     if (e.code === 'KeyM') {
       toggleMute();
     }
