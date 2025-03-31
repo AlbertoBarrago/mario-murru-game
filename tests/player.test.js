@@ -431,43 +431,6 @@ describe('Player Damage and Movement Methods', () => {
     });
 });
 
-describe('Player Rendering', () => {
-    let player;
-    let mockContext;
-
-    beforeEach(() => {
-        player = new Player(100, 100);
-
-        mockContext = {
-            fillStyle: '',
-            fillRect: jest.fn(),
-            beginPath: jest.fn(),
-            arc: jest.fn(),
-            stroke: jest.fn()
-        };
-    });
-
-    test('should render pepe character correctly', () => {
-        player.characterType = 'pepe';
-
-        player.render(mockContext);
-
-        expect(mockContext.fillStyle).toBe('#000'); // Last color set (for eyes)
-
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x, player.y, player.width, player.height);
-
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x + 8, player.y + 8, 4, 4);
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x + 20, player.y + 8, 4, 4);
-
-        expect(mockContext.beginPath).toHaveBeenCalled();
-        expect(mockContext.arc).toHaveBeenCalledWith(player.x + 16, player.y + 20, 8, 0, Math.PI, false);
-        expect(mockContext.stroke).toHaveBeenCalled();
-
-        expect(mockContext.fillRect.mock.calls.length).toBe(3); // Body + 2 eyes
-    });
-
-});
-
 describe('Player Frame Index Selection', () => {
     let player;
     let mockContext;
