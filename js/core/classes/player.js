@@ -29,7 +29,7 @@ export default class Player {
     this.invulnerable = false;
     this.invulnerableTimer = 0;
     this.invulnerableDuration = 60;
-    this.characterType = 'pepe';
+    this.characterType = 'mario';
   }
 
   /**
