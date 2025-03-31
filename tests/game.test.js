@@ -788,4 +788,79 @@ describe('Game Service', () => {
             expect(mockContext.fillText).toHaveBeenCalledWith('Press Q to Quit', expect.any(Number), expect.any(Number));
         });
     });
+
+    describe('Game Service Update Function', () => {
+        beforeEach(() => {
+            gameState.running = true;
+            gameState.paused = false;
+            gameState.over = false;
+            gameState.player = new Player();
+            gameState.enemies = [new Enemy()];
+            gameState.coins = [new Coin()];
+            gameState.particleSystem = new ParticleSystem();
+            gameState.canvas = { width: 800, height: 600 };
+            gameState.keys = new Set();
+        });
+
+        it('should handle missing particleSystem gracefully', () => {
+            gameState.particleSystem = null;
+            update();
+            expect(gameState.player.update).toHaveBeenCalledWith(gameState.keys, 800, 600);
+            expect(gameState.enemies[0].update).toHaveBeenCalledWith(800);
+            expect(gameState.coins[0].update).toHaveBeenCalled();
+        });
+
+        it('should handle empty enemies array', () => {
+            gameState.enemies = [];
+            update();
+            expect(gameState.player.update).toHaveBeenCalledWith(gameState.keys, 800, 600);
+            expect(gameState.coins[0].update).toHaveBeenCalled();
+            expect(gameState.particleSystem.update).toHaveBeenCalled();
+        });
+
+        it('should handle empty coins array', () => {
+            gameState.coins = [];
+            update();
+            expect(gameState.player.update).toHaveBeenCalledWith(gameState.keys, 800, 600);
+            expect(gameState.particleSystem.update).toHaveBeenCalled();
+        });
+
+        it('should update with multiple enemies and coins', () => {
+            const enemy2 = new Enemy();
+            const coin2 = new Coin();
+            gameState.enemies.push(enemy2);
+            gameState.coins.push(coin2);
+
+            update();
+
+            expect(gameState.enemies[0].update).toHaveBeenCalledWith(800);
+            expect(gameState.enemies[1].update).toHaveBeenCalledWith(800);
+            expect(gameState.coins[0].update).toHaveBeenCalled();
+            expect(gameState.coins[1].update).toHaveBeenCalled();
+        });
+
+        it('should update with active keyboard input', () => {
+            gameState.keys.add('ArrowRight');
+            gameState.keys.add('Space');
+
+            update();
+
+            expect(gameState.player.update).toHaveBeenCalledWith(
+                expect.objectContaining(new Set(['ArrowRight', 'Space'])),
+                800,
+                600
+            );
+        });
+
+        it('should handle canvas dimension changes', () => {
+            gameState.canvas.width = 1024;
+            gameState.canvas.height = 768;
+
+            update();
+
+            expect(gameState.player.update).toHaveBeenCalledWith(gameState.keys, 1024, 768);
+            expect(gameState.enemies[0].update).toHaveBeenCalledWith(1024);
+        });
+    });
+
 });
