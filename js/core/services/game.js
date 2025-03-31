@@ -114,7 +114,7 @@ export function setupGame() {
  * Toggle pause state
  */
 export function togglePause() {
-  if (gameState.pauseTransitioning) return;
+  if (gameState.pauseTransitioning || !gameState.started) return;
 
   const now = Date.now();
   if (now - gameState.lastPauseChange <= 300) return; // Prevent rapid toggling
@@ -122,6 +122,7 @@ export function togglePause() {
   gameState.pauseTransitioning = true;
   gameState.paused = !gameState.paused;
   gameState.lastPauseChange = now;
+  gameState.running = !gameState.paused;
 
   if (window) {
     window.gamePaused = gameState.paused;
@@ -129,16 +130,16 @@ export function togglePause() {
 
   if (gameState.paused) {
     sounds.backgroundMusic.pause();
-    gameState.player.pauseAnimation();
+    gameState.player?.pauseAnimation();
     gameState.enemies.forEach(enemy => enemy.pause());
-    gameState.particleSystem.pause();
+    gameState.particleSystem?.pause();
   } else {
     sounds.backgroundMusic.play().catch(error => {
       console.warn('Failed to resume background music:', error);
     });
-    gameState.player.resumeAnimation();
+    gameState.player?.resumeAnimation();
     gameState.enemies.forEach(enemy => enemy.resume());
-    gameState.particleSystem.resume();
+    gameState.particleSystem?.resume();
   }
 
   setTimeout(() => {
@@ -150,12 +151,16 @@ export function togglePause() {
  * Update game state
  */
 export function update() {
-  if (gameState.paused || gameState.over) return;
+  if (!gameState.running || gameState.paused || gameState.over) return;
 
-  gameState.player.update(gameState.keys, gameState.canvas.width, gameState.canvas.height);
+  if (gameState.player) {
+    gameState.player.update(gameState.keys, gameState.canvas.width, gameState.canvas.height);
+  }
   gameState.enemies.forEach(enemy => enemy.update(gameState.canvas.width));
   gameState.coins.forEach(coin => coin.update());
-  gameState.particleSystem.update();
+  if (gameState.particleSystem) {
+    gameState.particleSystem.update();
+  }
   checkCollisions();
   checkLevelComplete();
 }
@@ -201,11 +206,11 @@ export function checkCollisions() {
   // Enemy collisions
   gameState.enemies.forEach((enemy, index) => {
     if (gameState.player.x + gameState.player.width > enemy.x &&
-        gameState.player.x < enemy.x + enemy.width &&
-        gameState.player.y + gameState.player.height > enemy.y &&
-        gameState.player.y < enemy.y + enemy.height) {
+      gameState.player.x < enemy.x + enemy.width &&
+      gameState.player.y + gameState.player.height > enemy.y &&
+      gameState.player.y < enemy.y + enemy.height) {
 
-      if (gameState.player.velocityY > 0 && gameState.player.y + gameState.player.height < enemy.y + enemy.height / 2) {
+      if (gameState.player.velocityY > 0 && gameState.player.y + gameState.player.height - 10 <= enemy.y) {
         // Create explosion effect at enemy position
         gameState.particleSystem.createExplosion(
           enemy.x + enemy.width / 2,
@@ -221,8 +226,9 @@ export function checkCollisions() {
         gameState.player.velocityY = JUMP_FORCE / 1.5;
         gameState.score += 20;
 
-        // Play sound effect
+        // Play enemy defeat sound effect
         playSound('damage');
+        playSound('coin');
       } else if (!gameState.player.invulnerable) {
         const healthDepleted = gameState.player.takeDamage(ENEMY_DAMAGE);
         if (healthDepleted) {
@@ -241,10 +247,10 @@ export function checkCollisions() {
   // Coin collisions
   gameState.coins.forEach(coin => {
     if (!coin.collected &&
-        gameState.player.x + gameState.player.width > coin.x &&
-        gameState.player.x < coin.x + coin.width &&
-        gameState.player.y + gameState.player.height > coin.y &&
-        gameState.player.y < coin.y + coin.height) {
+      gameState.player.x + gameState.player.width > coin.x &&
+      gameState.player.x < coin.x + coin.width &&
+      gameState.player.y + gameState.player.height > coin.y &&
+      gameState.player.y < coin.y + coin.height) {
 
       coin.collected = true;
       gameState.score += COIN_SCORE;
@@ -284,8 +290,8 @@ export function loadNextLevel() {
     height: 30
   });
 
-  // Add more platforms based on level
-  const platformCount = 3 + gameState.currentLevel;
+  // Add exactly 4 platforms for each level
+  const platformCount = 4;
   for (let i = 0; i < platformCount; i++) {
     gameState.platforms.push({
       x: Math.random() * (gameState.canvas.width - 100),
@@ -321,9 +327,9 @@ export function loadNextLevel() {
 
       for (const platform of gameState.platforms) {
         if (coinX + 16 > platform.x &&
-            coinX < platform.x + platform.width &&
-            coinY + 16 > platform.y &&
-            coinY < platform.y + platform.height) {
+          coinX < platform.x + platform.width &&
+          coinY + 16 > platform.y &&
+          coinY < platform.y + platform.height) {
           validPosition = false;
           break;
         }
@@ -434,65 +440,65 @@ export function render() {
  * Render UI elements
  */
 export function renderUI() {
-    const { ctx, canvas, player, currentLevel, score } = gameState;
+  const { ctx, canvas, player, currentLevel, score } = gameState;
 
-    // Health bar configuration
-    const healthBar = {
-        x: 20,
-        y: 15,
-        width: 150,
-        height: 15,
-        borderWidth: 2
-    };
+  // Health bar configuration
+  const healthBar = {
+    x: 20,
+    y: 15,
+    width: 150,
+    height: 15,
+    borderWidth: 2
+  };
 
-    // Health bar with improved styling
-    // Border
-    ctx.fillStyle = '#000';
-    ctx.fillRect(
-        healthBar.x - healthBar.borderWidth,
-        healthBar.y - healthBar.borderWidth,
-        healthBar.width + healthBar.borderWidth * 2,
-        healthBar.height + healthBar.borderWidth * 2
-    );
+  // Health bar with improved styling
+  // Border
+  ctx.fillStyle = '#000';
+  ctx.fillRect(
+    healthBar.x - healthBar.borderWidth,
+    healthBar.y - healthBar.borderWidth,
+    healthBar.width + healthBar.borderWidth * 2,
+    healthBar.height + healthBar.borderWidth * 2
+  );
 
-    // Background
-    ctx.fillStyle = '#000';
-    ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
+  // Background
+  ctx.fillStyle = '#000';
+  ctx.fillRect(healthBar.x, healthBar.y, healthBar.width, healthBar.height);
 
-    // Health amount with bright green color
-    const healthWidth = (player.health / 100) * healthBar.width;
-    ctx.fillStyle = '#00ff00';
-    ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
+  // Health amount with bright green color
+  const healthWidth = (player.health / 100) * healthBar.width;
+  ctx.fillStyle = '#00ff00';
+  ctx.fillRect(healthBar.x, healthBar.y, healthWidth, healthBar.height);
 
-    // Health text - centered in the bar
-    ctx.fillStyle = '#fff';
-    ctx.font = '10px "Press Start 2P"';
-    ctx.textAlign = 'center';
-    ctx.fillText(`HP: ${player.health}/100`, healthBar.x + healthBar.width / 2, healthBar.y + 11);
-    ctx.textAlign = 'left'; // Reset text alignment
+  // Health text - centered in the bar
+  ctx.fillStyle = '#fff';
+  ctx.font = '10px "Press Start 2P"';
+  ctx.textAlign = 'center';
+  ctx.fillText(`HP: ${player.health}/100`, healthBar.x + healthBar.width / 2, healthBar.y + 11);
+  ctx.textAlign = 'left'; // Reset text alignment
 
-    // Lives with heart icons in line with HP bar
-    ctx.fillStyle = '#ff0000';
-    for (let i = 0; i < player.lives; i++) {
-        // Draw heart shape
-        const heartX = healthBar.x + healthBar.width + 30 + i * 25;
-        const heartY = healthBar.y + healthBar.height / 2 - 10;
+  // Lives with heart icons in line with HP bar
+  ctx.fillStyle = '#ff0000';
+  for (let i = 0; i < player.lives; i++) {
+    // Draw heart shape
+    const heartX = healthBar.x + healthBar.width + 30 + i * 25;
+    const heartY = healthBar.y + healthBar.height / 2 - 10;
 
-        // Heart shape
-        ctx.beginPath();
-        ctx.moveTo(heartX, heartY + 5);
-        ctx.bezierCurveTo(heartX, heartY, heartX - 5, heartY, heartX - 5, heartY + 5);
-        ctx.bezierCurveTo(heartX - 5, heartY + 10, heartX, heartY + 15, heartX, heartY + 20);
-        ctx.bezierCurveTo(heartX, heartY + 15, heartX + 5, heartY + 10, heartX + 5, heartY + 5);
-        ctx.bezierCurveTo(heartX + 5, heartY, heartX, heartY, heartX, heartY + 5);
-        ctx.fill();
-    }
+    // Heart shape
+    ctx.beginPath();
+    ctx.moveTo(heartX, heartY + 5);
+    ctx.bezierCurveTo(heartX, heartY, heartX - 5, heartY, heartX - 5, heartY + 5);
+    ctx.bezierCurveTo(heartX - 5, heartY + 10, heartX, heartY + 15, heartX, heartY + 20);
+    ctx.bezierCurveTo(heartX, heartY + 15, heartX + 5, heartY + 10, heartX + 5, heartY + 5);
+    ctx.bezierCurveTo(heartX + 5, heartY, heartX, heartY, heartX, heartY + 5);
+    ctx.fill();
+  }
 
-    // Level and score on the same line
-    ctx.fillStyle = '#000';
-    ctx.font = '14px "Press Start 2P"';
-    ctx.fillText(`Level: ${currentLevel}`, canvas.width - 300, healthBar.y + 11);
-    ctx.fillText(`Score: ${score}`, canvas.width - 150, healthBar.y + 11);
+  // Level and score on the same line
+  ctx.fillStyle = '#000';
+  ctx.font = '14px "Press Start 2P"';
+  ctx.fillText(`Level: ${currentLevel}`, canvas.width - 300, healthBar.y + 11);
+  ctx.fillText(`Score: ${score}`, canvas.width - 150, healthBar.y + 11);
 }
 
 /**

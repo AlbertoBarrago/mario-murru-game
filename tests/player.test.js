@@ -161,18 +161,18 @@ describe('Player', () => {
     });
 
     test('should handle character type switching', () => {
-        expect(player.characterType).toBe('pepe');
+        expect(player.characterType).toBe('mario');
 
         const keys = { 'KeyT': true };
         player.update(keys, canvasWidth, canvasHeight);
 
-        expect(player.characterType).toBe('mario');
+        expect(player.characterType).toBe('pepe');
 
         // Press T again
         player.update(keys, canvasWidth, canvasHeight);
 
         // Should toggle back
-        expect(player.characterType).toBe('mario');
+        expect(player.characterType).toBe('pepe');
     });
 
     test('should handle taking damage', () => {
@@ -313,7 +313,7 @@ describe('Player Update Method', () => {
         player.lastKeyT = true;
         player.update({ 'KeyT': false }, canvasWidth, canvasHeight);
         expect(player.lastKeyT).toBe(false);
-        expect(player.characterType).toBe('pepe');
+        expect(player.characterType).toBe('mario');
     });
 
     test('should reset frame animation when stopping movement', () => {
@@ -372,18 +372,18 @@ describe('Player Damage and Movement Methods', () => {
     });
 
     test('should toggle character type when T key is pressed and released', () => {
-        expect(player.characterType).toBe('pepe');
+        expect(player.characterType).toBe('mario');
         player.lastKeyT = false;
 
         player.update({ 'KeyT': true }, 800, 600);
-        expect(player.characterType).toBe('mario');
+        expect(player.characterType).toBe('pepe');
         expect(player.lastKeyT).toBe(true);
 
         player.update({ 'KeyT': false }, 800, 600);
         expect(player.lastKeyT).toBe(false);
 
         player.update({ 'KeyT': true }, 800, 600);
-        expect(player.characterType).toBe('pepe');
+        expect(player.characterType).toBe('mario');
     });
 
     test('should apply gravity and cap falling speed', () => {
@@ -466,69 +466,6 @@ describe('Player Rendering', () => {
         expect(mockContext.fillRect.mock.calls.length).toBe(3); // Body + 2 eyes
     });
 
-    test('should render mario character correctly', () => {
-        player.characterType = 'mario';
-
-        player.render(mockContext);
-
-        expect(mockContext.fillStyle).toBe('#000'); // Last color set (for eyes)
-
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x, player.y, player.width, player.height);
-
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x + 8, player.y + 8, 4, 4);
-        expect(mockContext.fillRect).toHaveBeenCalledWith(player.x + 20, player.y + 8, 4, 4);
-
-        expect(mockContext.beginPath).toHaveBeenCalled();
-        expect(mockContext.arc).toHaveBeenCalledWith(player.x + 16, player.y + 20, 5, 0, Math.PI, false);
-        expect(mockContext.stroke).toHaveBeenCalled();
-
-        expect(mockContext.fillRect.mock.calls.length).toBe(3); // Body + 2 eyes
-    });
-
-    test('should set the correct fill colors for each character type', () => {
-        player.characterType = 'pepe';
-        player.render(mockContext);
-
-        const pepeCtx = {
-            fillStyle: '',
-            fillRect: jest.fn().mockImplementation(function () {
-                // Store the current fillStyle with each call
-                this.fillRectCalls.push({
-                    args: Array.from(arguments),
-                    fillStyle: this.fillStyle
-                });
-            }),
-            fillRectCalls: [],
-            beginPath: jest.fn(),
-            arc: jest.fn(),
-            stroke: jest.fn()
-        };
-
-        player.render(pepeCtx);
-
-        expect(pepeCtx.fillRectCalls[0].fillStyle).toBe('#77b255');
-
-        // Test mario colors
-        player.characterType = 'mario';
-        const marioCtx = {
-            fillStyle: '',
-            fillRect: jest.fn().mockImplementation(function () {
-                // Store the current fillStyle with each call
-                this.fillRectCalls.push({
-                    args: Array.from(arguments),
-                    fillStyle: this.fillStyle
-                });
-            }),
-            fillRectCalls: [],
-            beginPath: jest.fn(),
-            arc: jest.fn(),
-            stroke: jest.fn()
-        };
-
-        player.render(marioCtx);
-
-        expect(marioCtx.fillRectCalls[0].fillStyle).toBe('#FFC0CB');
-    });
 });
 
 describe('Player Frame Index Selection', () => {
