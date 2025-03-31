@@ -1,2 +1,3 @@
 - [ ] Add leader board
-- [ ] Craete db for high scores
+- [ ] Create db for high scores
+- [ ] Change enemy every next lever 

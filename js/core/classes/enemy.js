@@ -1,6 +1,8 @@
 /**
  * Represents an enemy character in the game
  */
+import { assets } from '../../assets';
+
 export default class Enemy {
   /**
      * Creates a new Enemy instance
@@ -8,21 +10,20 @@ export default class Enemy {
      * @param {number} y - The initial y coordinate
      * @param {number} width - The width of the enemy
      * @param {number} height - The height of the enemy
-     * @param {number} velocityX - The horizontal velocity
+     * @param {number} speed - The speed of the enemy
+     * @param {number} type - The type of the enemy (0: Goomba, 1: Koopa, 2: Ghost)
      */
-  constructor(x, y, width, height, velocityX) {
+  constructor(x, y, width, height, speed, type = 0) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
-    this.velocityX = velocityX;
-    this.direction = velocityX > 0 ? 'right' : 'left';
-    this.frame = 0;
-    this.frameCount = 2;
-    this.frameDelay = 10;
-    this.frameTimer = 0;
+    this.speed = speed;
+    this.direction = 1;
+    this.type = type; // 0: Goomba, 1: Koopa, 2: Ghost
+    this.animationFrame = 0;
+    this.frameCount = 0;
     this.isPaused = false;
-    this.savedVelocity = null;
   }
 
   /**
@@ -48,17 +49,20 @@ export default class Enemy {
      * @param {number} canvasWidth - The width of the game canvas
      */
   update(canvasWidth) {
-    this.x += this.velocityX;
+    if (this.isPaused) return;
 
+    this.x += this.speed * this.direction;
+
+    // Boundary check
     if (this.x <= 0 || this.x + this.width >= canvasWidth) {
-      this.velocityX *= -1;
-      this.direction = this.velocityX > 0 ? 'right' : 'left';
+      this.direction *= -1;
     }
 
-    this.frameTimer++;
-    if (this.frameTimer > this.frameDelay) {
-      this.frame = (this.frame + 1) % this.frameCount;
-      this.frameTimer = 0;
+    // Animation
+    this.frameCount++;
+    if (this.frameCount >= 10) { // Change animation every 10 frames
+      this.animationFrame = this.animationFrame === 0 ? 1 : 0;
+      this.frameCount = 0;
     }
   }
 
@@ -67,51 +71,22 @@ export default class Enemy {
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
      */
   render(ctx) {
-    // Determine which enemy type to use (we'll use the first type for now)
-    // In a more advanced implementation, this could be a property of the enemy
-    const enemyType = 0; // 0 = Goomba, 1 = Koopa, 2 = Ghost
+    const enemySprite = assets.images['enemies_sprite'];
+    if (enemySprite) {
+      // Calculate the source x position based on enemy type and animation frame
+      // Each enemy type has 2 frames (idle and walking/fading)
+      const sourceX = (this.type * 64) + (this.animationFrame * 32);
+      const sourceY = 0;
 
-    // Calculate which frame to use based on animation state
-    // Each enemy type has 2 frames (idle and walking)
-    const frameOffset = enemyType * 2; // 2 frames per enemy type
-    const frameIndex = frameOffset + this.frame;
-
-    // Calculate the classes position in the sprite sheet
-    const sourceX = frameIndex * 32; // Each frame is 32px wide
-    const sourceY = 0;
-
-    // Store original velocity when paused
-    if (this.isPaused && !this.savedVelocity) {
-      this.savedVelocity = this.velocityX;
-      this.velocityX = 0;
-    }
-
-    // Draw the sprite
-    try {
-      const img = new Image();
-      img.src = 'assets/images/sprites/enemies.svg';
-      ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
-    } catch (e) {
-      // Fallback to colored rectangles if image fails to load
+      ctx.drawImage(
+        enemySprite,
+        sourceX, sourceY, 32, 32, // Source coordinates from sprite sheet
+        this.x, this.y, this.width, this.height // Destination coordinates on canvas
+      );
+    } else {
+      // Fallback rendering
       ctx.fillStyle = '#ff0000';
       ctx.fillRect(this.x, this.y, this.width, this.height);
-
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-      ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
-
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(this.x + 6, this.y + 6);
-      ctx.lineTo(this.x + 12, this.y + 10);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(this.x + 26, this.y + 6);
-      ctx.lineTo(this.x + 20, this.y + 10);
-      ctx.stroke();
-      console.error('Failed to load enemy sprite:', e);
     }
   }
 }

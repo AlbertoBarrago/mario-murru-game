@@ -290,7 +290,7 @@ export function loadNextLevel() {
     height: 30
   });
 
-  // Add exactly 4 platforms for each level
+  // Add platforms
   const platformCount = 4;
   for (let i = 0; i < platformCount; i++) {
     gameState.platforms.push({
@@ -301,15 +301,33 @@ export function loadNextLevel() {
     });
   }
 
-  // Add more enemies based on level
+  // Define number of enemy types (3 types: Goomba, Koopa, Ghost)
+  const numberOfEnemyTypes = 3;
+
+  // Add enemies based on level
   for (let i = 0; i < gameState.currentLevel; i++) {
     const speed = 1 + Math.random() * gameState.currentLevel;
+
+    // Determine enemy type
+    let enemyType;
+
+    if (gameState.currentLevel <= numberOfEnemyTypes) {
+      enemyType = gameState.currentLevel - 1;
+    } else {
+      // For later levels, mix up all enemy types
+      enemyType = Math.floor(Math.random() * numberOfEnemyTypes);
+    }
+
+    // Adjust y position based on enemy type (optional)
+    let yPosition = 418; // Default y position
+
     gameState.enemies.push(new Enemy(
       100 + Math.random() * (gameState.canvas.width - 200),
-      418,
+      yPosition,
       32,
       32,
-      speed
+      speed,
+      enemyType
     ));
   }
 
