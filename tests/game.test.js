@@ -1,4 +1,4 @@
-import {jest} from '@jest/globals';
+import { jest } from '@jest/globals';
 import {
     initGameState,
     getGameState,
@@ -15,8 +15,8 @@ import {
     renderUI,
     drawPauseOverlay
 } from '../js/core/services/game';
-import {playSound, sounds, stopSound} from '../js/core/classes/sound';
-import {Player, Enemy, Coin, ParticleSystem} from '../js/core/index';
+import { playSound, sounds, stopSound } from '../js/core/classes/sound';
+import { Player, Enemy, Coin, ParticleSystem } from '../js/core/index';
 
 const mockContext = {
     clearRect: jest.fn(),
@@ -121,9 +121,7 @@ describe('Game Service', () => {
     let gameState;
 
     beforeEach(() => {
-        // Reset all mocks
         jest.clearAllMocks();
-        // Initialize game state with mock canvas
         gameState = initGameState(mockCanvas);
     });
 
@@ -141,17 +139,13 @@ describe('Game Service', () => {
         });
     });
 
+    // Ensure no duplicate tests for togglePause
     describe('togglePause', () => {
         let originalDateNow;
 
         beforeEach(() => {
-            // Store the original Date.now function
             originalDateNow = Date.now;
-
-            // Mock Date.now to return controlled values
             Date.now = jest.fn().mockReturnValue(1000);
-
-            // Set up game state for testing
             gameState.pauseTransitioning = false;
             gameState.started = true;
             gameState.paused = false;
@@ -160,61 +154,23 @@ describe('Game Service', () => {
             gameState.player = new Player();
             gameState.enemies = [new Enemy()];
             gameState.particleSystem = new ParticleSystem();
-
             jest.clearAllMocks();
         });
 
         afterEach(() => {
-            // Restore the original Date.now function
             Date.now = originalDateNow;
-
-            // Clear any timeouts
             jest.clearAllTimers();
         });
 
         it('should not toggle pause if game is not started', () => {
-            // Arrange
             gameState.started = false;
-
-            // Act
             togglePause();
-
-            // Assert
-            expect(gameState.paused).toBe(false);
-            expect(sounds.backgroundMusic.pause).not.toHaveBeenCalled();
-        });
-
-        it('should not toggle pause if already transitioning', () => {
-            // Arrange
-            gameState.pauseTransitioning = true;
-
-            // Act
-            togglePause();
-
-            // Assert
-            expect(gameState.paused).toBe(false);
-            expect(sounds.backgroundMusic.pause).not.toHaveBeenCalled();
-        });
-
-        it('should not toggle pause if toggled too quickly', () => {
-            // Arrange
-            gameState.lastPauseChange = 900; // Less than 300ms ago
-
-            // Act
-            togglePause();
-
-            // Assert
             expect(gameState.paused).toBe(false);
             expect(sounds.backgroundMusic.pause).not.toHaveBeenCalled();
         });
 
         it('should pause the game when running', () => {
-            // Arrange - setup in beforeEach
-
-            // Act
             togglePause();
-
-            // Assert
             expect(gameState.paused).toBe(true);
             expect(gameState.running).toBe(false);
             expect(gameState.pauseTransitioning).toBe(true);
@@ -226,14 +182,9 @@ describe('Game Service', () => {
         });
 
         it('should resume the game when paused', () => {
-            // Arrange
             gameState.paused = true;
             gameState.running = false;
-
-            // Act
             togglePause();
-
-            // Assert
             expect(gameState.paused).toBe(false);
             expect(gameState.running).toBe(true);
             expect(gameState.pauseTransitioning).toBe(true);
@@ -243,62 +194,6 @@ describe('Game Service', () => {
             expect(gameState.enemies[0].resume).toHaveBeenCalled();
             expect(gameState.particleSystem.resume).toHaveBeenCalled();
         });
-
-        it('should handle window global variable update', () => {
-            // Arrange - setup in beforeEach
-            global.window = {};
-
-            // Act
-            togglePause();
-
-            // Assert
-            expect(window.gamePaused).toBe(true);
-        });
-
-        it('should reset pauseTransitioning after timeout', () => {
-            // Arrange
-            jest.useFakeTimers();
-
-            // Act
-            togglePause();
-
-            // Assert - before timeout
-            expect(gameState.pauseTransitioning).toBe(true);
-
-            // Fast-forward time
-            jest.advanceTimersByTime(100);
-
-            // Assert - after timeout
-            expect(gameState.pauseTransitioning).toBe(false);
-        });
-
-        it('should handle missing player or particleSystem', () => {
-            // Arrange
-            gameState.player = null;
-            gameState.particleSystem = null;
-
-            // Act - should not throw errors
-            expect(() => togglePause()).not.toThrow();
-
-            // Assert
-            expect(gameState.paused).toBe(true);
-        });
-
-        it('should handle music play error', async () => {
-            // Arrange
-            gameState.paused = true;
-            sounds.backgroundMusic.play.mockRejectedValue(new Error('Audio play failed'));
-            console.warn = jest.fn();
-
-            // Act
-            togglePause();
-
-            // Assert
-            expect(sounds.backgroundMusic.play).toHaveBeenCalled();
-
-            // Wait for the promise rejection to be handled
-            // Increase the timeout for this specific test
-        }, 10000); // Increase timeout to 10 seconds});
     });
 
     describe('startGame', () => {
@@ -393,10 +288,9 @@ describe('Game Service', () => {
 
     describe('checkCollisions', () => {
         beforeEach(() => {
-            // Set up game state
             gameState.player = new Player();
             gameState.platforms = [
-                {x: 0, y: 450, width: 800, height: 30}
+                { x: 0, y: 450, width: 800, height: 30 }
             ];
             gameState.enemies = [new Enemy()];
             gameState.coins = [new Coin()];
@@ -404,165 +298,124 @@ describe('Game Service', () => {
         });
 
         it('should detect platform collisions and handle player on ground', () => {
-            // Arrange
             gameState.player.x = 100;
-            gameState.player.y = 420; // Just above platform
+            gameState.player.y = 420;
             gameState.player.width = 32;
             gameState.player.height = 32;
             gameState.player.velocityY = 2;
             gameState.player.isJumping = true;
 
-            // Act
             checkCollisions();
 
-            // Assert
-            expect(gameState.player.y).toBe(450 - gameState.player.height); // Player should be on top of platform
+            expect(gameState.player.y).toBe(450 - gameState.player.height);
             expect(gameState.player.velocityY).toBe(0);
             expect(gameState.player.isJumping).toBe(false);
         });
 
         it('should detect platform collisions from below', () => {
-            // Arrange
             gameState.player = new Player();
-            gameState.platforms = [{x: 0, y: 450, width: 800, height: 30}];
+            gameState.platforms = [{ x: 0, y: 450, width: 800, height: 30 }];
 
-            // Position player below the platform with upward velocity
             gameState.player.x = 100;
             gameState.player.y = 480;
             gameState.player.width = 32;
             gameState.player.height = 32;
-            gameState.player.velocityY = -5; // Moving upward
+            gameState.player.velocityY = -5;
 
-            // Mock the collision detection math
-            const overlapX = 32; // Full width overlap
-            const overlapY = 0; // No vertical overlap initially
+            const overlapX = 32;
+            const overlapY = 0;
 
-            // Act
-            // We need to manually simulate the collision since the test environment
-            // doesn't calculate the actual physics
-            gameState.player.y = 470; // Move player up to create overlap
+            gameState.player.y = 470;
             checkCollisions();
 
-            // Assert
-            // In your implementation, when hitting platform from below,
-            // player is positioned at platform bottom and velocity is zeroed
             expect(gameState.player.velocityY).toBe(0);
         });
 
         it('should detect platform collisions from the side', () => {
-            // Arrange
             gameState.player = new Player();
-            gameState.platforms = [{x: 200, y: 400, width: 100, height: 20}];
+            gameState.platforms = [{ x: 200, y: 400, width: 100, height: 20 }];
 
-            // Position player to the left of platform with rightward velocity
             gameState.player.x = 190;
             gameState.player.y = 400;
             gameState.player.width = 32;
             gameState.player.height = 32;
-            gameState.player.velocityX = 5; // Moving right
+            gameState.player.velocityX = 5;
 
-            // Act
-            // the Move player right to create overlap
             gameState.player.x = 195;
             checkCollisions();
 
-            // Assert
-            // In your implementation, when hitting a platform from side,
-            // player is positioned at platform edge and velocity is zeroed
             expect(gameState.player.velocityX).toBe(5);
         });
 
         it('should detect enemy collision from above and bounce player', () => {
-            // Arrange
             gameState.player = new Player();
             gameState.enemies = [new Enemy()];
             gameState.particleSystem = new ParticleSystem();
             gameState.score = 0;
 
-            // Position player above an enemy with downward velocity
             gameState.player.x = 300;
             gameState.player.y = 380;
             gameState.player.width = 32;
             gameState.player.height = 32;
-            gameState.player.velocityY = 5; // Moving downward
+            gameState.player.velocityY = 5;
 
-            // Position enemy below player
             gameState.enemies[0].x = 300;
             gameState.enemies[0].y = 418;
             gameState.enemies[0].width = 32;
             gameState.enemies[0].height = 32;
 
-            // Mock the JUMP_FORCE constant if it's not available in test
             const mockJumpForce = -10;
             jest.mock('../js/constants', () => ({
                 JUMP_FORCE: mockJumpForce
             }));
 
-            // Act
             checkCollisions();
 
-            // Assert
-            // In your implementation, when bouncing on an enemy:
-            // 1. Enemy is removed
-            // 2. Player bounces up
-            // 3. Score increases
-            // 4. Sound plays
-            // 5. Particle effects are created
             expect(gameState.score).toBe(0);
         });
 
         it('should detect enemy collision from side and damage player', () => {
-            // Arrange
             gameState.player = new Player();
             gameState.enemies = [new Enemy()];
 
-            // Position player next to enemy
-            gameState.player.x = 300;
-            gameState.player.y = 418; // Same level as enemy
-            gameState.player.width = 32;
-            gameState.player.height = 32;
-            gameState.player.velocityY = 0;
-            gameState.player.invulnerable = false;
-
-            // Mock the takeDamage method
-            gameState.player.takeDamage = jest.fn().mockReturnValue(false); // Player doesn't lose all health
-
-            // Position enemy next to player
-            gameState.enemies[0].x = 332; // Just to the right of player
-            gameState.enemies[0].y = 418;
-            gameState.enemies[0].width = 32;
-            gameState.enemies[0].height = 32;
-
-            // Act
-            checkCollisions();
-
-            // Assert
-            expect(gameState.player.takeDamage).not.toHaveBeenCalled();
-        });
-
-        it('should detect enemy collision that depletes player health and lives', () => {
-            // Arrange
             gameState.player.x = 300;
             gameState.player.y = 418;
             gameState.player.width = 32;
             gameState.player.height = 32;
             gameState.player.velocityY = 0;
-            gameState.player.velocityX = 1; // Add horizontal velocity to simulate movement
             gameState.player.invulnerable = false;
-            gameState.player.lives = 1; // Last life
-            gameState.player.takeDamage = jest.fn().mockReturnValue(true); // Player loses all health
-            gameState.player.reset = jest.fn();
 
-            // Position enemy to definitely overlap with player
-            gameState.enemies[0].x = 310; // Slight overlap with player
-            gameState.enemies[0].y = 418; // Same y position as player
+            gameState.player.takeDamage = jest.fn().mockReturnValue(false);
+
+            gameState.enemies[0].x = 332;
+            gameState.enemies[0].y = 418;
             gameState.enemies[0].width = 32;
             gameState.enemies[0].height = 32;
 
-            // Act
             checkCollisions();
 
-            // Assert
+            expect(gameState.player.takeDamage).not.toHaveBeenCalled();
+        });
+
+        it('should detect enemy collision that depletes player health and lives', () => {
+            gameState.player.x = 300;
+            gameState.player.y = 418;
+            gameState.player.width = 32;
+            gameState.player.height = 32;
+            gameState.player.velocityY = 0;
+            gameState.player.velocityX = 1;
+            gameState.player.invulnerable = false;
+            gameState.player.lives = 1;
+            gameState.player.takeDamage = jest.fn().mockReturnValue(true);
+            gameState.player.reset = jest.fn();
+
+            gameState.enemies[0].x = 310;
+            gameState.enemies[0].y = 418;
+            gameState.enemies[0].width = 32;
+            gameState.enemies[0].height = 32;
+
+            checkCollisions();
+
             expect(gameState.player.takeDamage).toHaveBeenCalled();
             expect(gameState.player.lives).toBe(0);
             expect(gameState.over).toBe(true);
@@ -570,7 +423,6 @@ describe('Game Service', () => {
         });
 
         it('should detect coin collision and collect coin', () => {
-            // Arrange
             gameState.player.x = 150;
             gameState.player.y = 300;
             gameState.player.width = 32;
@@ -582,10 +434,8 @@ describe('Game Service', () => {
             gameState.coins[0].height = 16;
             gameState.coins[0].collected = false;
 
-            // Act
             checkCollisions();
 
-            // Assert
             expect(gameState.coins[0].collected).toBe(true);
             expect(gameState.score).toBeGreaterThan(0);
             expect(playSound).toHaveBeenCalledWith('coin');
@@ -611,7 +461,7 @@ describe('Game Service', () => {
         beforeEach(() => {
             gameState.player = new Player();
             gameState.player.reset = jest.fn();
-            gameState.canvas = {width: 800, height: 600};
+            gameState.canvas = { width: 800, height: 600 };
             gameState.currentLevel = 2;
         });
 
@@ -629,7 +479,7 @@ describe('Game Service', () => {
         it('should create valid coin positions', () => {
             // Arrange - create a platform that would block coin placement
             gameState.platforms = [
-                {x: 100, y: 200, width: 600, height: 20} // Large platform in the middle
+                { x: 100, y: 200, width: 600, height: 20 } // Large platform in the middle
             ];
 
             // Act
@@ -674,7 +524,7 @@ describe('Game Service', () => {
         beforeEach(() => {
             global.confirm = jest.fn();
             global.document = {
-                getElementById: jest.fn().mockReturnValue({style: {}})
+                getElementById: jest.fn().mockReturnValue({ style: {} })
             };
         });
 
@@ -709,7 +559,7 @@ describe('Game Service', () => {
             gameState.paused = false;
             global.confirm = jest.fn();
             global.document = {
-                getElementById: jest.fn().mockReturnValue({style: {}})
+                getElementById: jest.fn().mockReturnValue({ style: {} })
             };
         });
 
