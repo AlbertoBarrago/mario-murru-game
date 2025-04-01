@@ -244,7 +244,7 @@ export function checkCollisions() {
           gameState.particleSystem.createScorePopup(
             gameState.princess.x + gameState.princess.width / 2,
             gameState.princess.y - 20,
-            "Princess can now be rescued!",
+            'Princess can now be rescued!',
             '#00ff00'
           );
         }
@@ -288,7 +288,7 @@ export function checkCollisions() {
         gameState.particleSystem.createScorePopup(
           gameState.princess.x + gameState.princess.width / 2,
           gameState.princess.y - 20,
-          "Defeat all enemies first!",
+          'Defeat all enemies first!',
           '#ff0000'
         );
       }

@@ -109,7 +109,7 @@ function gameLoop() {
  * Render game over screen
  */
 function renderGameOver() {
-  const { ctx, canvas, score, keys, victory, creditsPosition } = gameState;
+  const { ctx, canvas, score, keys, victory } = gameState;
 
   ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
