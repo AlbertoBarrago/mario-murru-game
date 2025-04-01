@@ -10,6 +10,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: write  # Add this if it's a private repo
 
 concurrency:
   group: "pages"
@@ -18,14 +19,14 @@ concurrency:
 jobs:
   deploy:
     environment:
-      name: deployment-environment
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }} # Ensure correct reference
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -34,23 +35,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build project
         run: npm run build
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-artifacts
-          path: './dist'
-
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v3
 
-      - name: Upload artifact for Pages
+      - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v2
         with:
           path: './dist'
 
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deploy
         uses: actions/deploy-pages@v2
