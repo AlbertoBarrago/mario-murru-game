@@ -57,7 +57,7 @@ function setupEventListeners() {
       if (startScreen) {
         startScreen.style.display = 'none';
       }
-      startGame();
+      startGame(e.shiftKey);
     }
 
     if (e.code === 'KeyP' && gameState.started) {
@@ -109,21 +109,55 @@ function gameLoop() {
  * Render game over screen
  */
 function renderGameOver() {
-  const { ctx, canvas, score, keys } = gameState;
+  const { ctx, canvas, score, keys, victory, creditsPosition } = gameState;
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = '#fff';
-  ctx.font = '48px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
+  if (victory) {
+    ctx.save();
+    ctx.fillStyle = '#FFD700';
+    ctx.font = '48px Arial';
+    ctx.textAlign = 'center';
 
-  ctx.font = '24px Arial';
-  ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+    const credits = [
+      'YOU SAVED THE PRINCESS!',
+      '',
+      'Final Score: ' + score,
+      '',
+      'Special Thanks To:',
+      '',
+      'The World of Internet',
+      'For its endless inspiration',
+      '',
+      'Alberto Barrago',
+      'The Creator',
+      '',
+      'Press R to play again'
+    ];
 
-  ctx.font = '18px Arial';
-  ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
+    const lineHeight = 40;
+    const totalHeight = credits.length * lineHeight;
+    const startY = (canvas.height - totalHeight) / 2;
+
+    credits.forEach((line, index) => {
+      const y = startY + (index * lineHeight);
+      ctx.fillText(line, canvas.width / 2, y);
+    });
+
+    ctx.restore();
+  } else {
+    ctx.fillStyle = '#fff';
+    ctx.font = '48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
+
+    ctx.font = '24px Arial';
+    ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+
+    ctx.font = '18px Arial';
+    ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
+  }
 
   ctx.textAlign = 'left';
 

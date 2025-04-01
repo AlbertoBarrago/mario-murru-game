@@ -31,7 +31,7 @@ module.exports = {
                 type: 'asset/resource',
                 generator: {
                     filename: 'assets/[path][name][ext]',
-                    publicPath: '/',
+                    publicPath: './',
                 },
             },
         ],

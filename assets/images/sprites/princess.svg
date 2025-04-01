@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="64" version="1.1" viewBox="0 0 128 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Princess Character (32x32 pixels, 2 frames) -->
+  <g id="princess">
+    <!-- Frame 1: Standing -->
+    <g transform="translate(0,0)">
+      <!-- Crown -->
+      <path d="M14,4 L18,4 L20,2 L22,4 L26,4 L24,8 L16,8 Z" fill="#ffd700"/>
+      <!-- Head -->
+      <circle cx="20" cy="10" r="6" fill="#ffe0bd"/>
+      <!-- Dress -->
+      <path d="M14,16 Q20,14 26,16 L28,28 Q20,30 12,28 Z" fill="#ff69b4"/>
+      <!-- Arms -->
+      <path d="M14,18 L10,22 M26,18 L30,22" stroke="#ffe0bd" stroke-width="2" fill="none"/>
+      <!-- Legs -->
+      <path d="M16,28 L14,32 M24,28 L26,32" stroke="#ffe0bd" stroke-width="2"/>
+    </g>
+    <!-- Frame 2: Walking -->
+    <g transform="translate(32,0)">
+      <!-- Crown -->
+      <path d="M14,4 L18,4 L20,2 L22,4 L26,4 L24,8 L16,8 Z" fill="#ffd700"/>
+      <!-- Head -->
+      <circle cx="20" cy="10" r="6" fill="#ffe0bd"/>
+      <!-- Dress -->
+      <path d="M14,16 Q20,14 26,16 L28,28 Q20,30 12,28 Z" fill="#ff69b4"/>
+      <!-- Arms (Swinging) -->
+      <path d="M14,18 L12,24 M26,18 L28,24" stroke="#ffe0bd" stroke-width="2" fill="none"/>
+      <!-- Legs (Walking) -->
+      <path d="M18,28 L16,32 M22,28 L24,30" stroke="#ffe0bd" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- Enemy Character (32x32 pixels, 2 frames) -->
+  <g id="enemy" transform="translate(64,0)">
+    <!-- Frame 1 -->
+    <g transform="translate(0,0)">
+      <!-- Body -->
+      <path d="M12,12 Q20,8 28,12 Q28,24 20,28 Q12,24 12,12 Z" fill="#8b4513"/>
+      <!-- Eyes -->
+      <circle cx="16" cy="16" r="2" fill="white"/>
+      <circle cx="24" cy="16" r="2" fill="white"/>
+      <circle cx="16" cy="16" r="1" fill="black"/>
+      <circle cx="24" cy="16" r="1" fill="black"/>
+      <!-- Spikes -->
+      <path d="M16,8 L20,12 L24,8" stroke="#8b4513" stroke-width="2" fill="none"/>
+    </g>
+    <!-- Frame 2 -->
+    <g transform="translate(32,0)">
+      <!-- Body (Squished) -->
+      <path d="M12,14 Q20,10 28,14 Q28,26 20,30 Q12,26 12,14 Z" fill="#8b4513"/>
+      <!-- Eyes -->
+      <circle cx="16" cy="18" r="2" fill="white"/>
+      <circle cx="24" cy="18" r="2" fill="white"/>
+      <circle cx="16" cy="18" r="1" fill="black"/>
+      <circle cx="24" cy="18" r="1" fill="black"/>
+      <!-- Spikes -->
+      <path d="M16,10 L20,14 L24,10" stroke="#8b4513" stroke-width="2" fill="none"/>
+    </g>
+  </g>
+</svg>
