@@ -1,6 +1,6 @@
 import { playSound, sounds, stopSound } from '../classes/sound.js';
 import { COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE } from '../../constants';
-import { Coin, Enemy, ParticleSystem, Player } from '../index';
+import { Coin, Enemy, ParticleSystem, Player, Princess } from '../index';
 
 const gameState = {
   loaded: false,
@@ -8,6 +8,7 @@ const gameState = {
   running: false,
   paused: false,
   over: false,
+  victory: false,
   currentLevel: 1,
   score: 0,
   pauseTransitioning: false,
@@ -19,7 +20,10 @@ const gameState = {
   particleSystem: null,
   canvas: null,
   ctx: null,
-  keys: {}
+  keys: {},
+  creditsPosition: 300,
+  creditsSpeed: 1.5,
+  creditsPaused: false
 };
 
 /**
@@ -43,7 +47,7 @@ export function getGameState() {
 /**
  * Start the game
  */
-export function startGame() {
+export function startGame(skipToFinal = false) {
   if (!gameState.loaded) return;
 
   gameState.started = true;
@@ -58,6 +62,12 @@ export function startGame() {
   }
 
   playSound('backgroundMusic');
+
+  // Skip to final level if requested
+  if (skipToFinal) {
+    gameState.currentLevel = 5;
+    loadNextLevel();
+  }
 }
 
 /**
@@ -158,6 +168,7 @@ export function update() {
   }
   gameState.enemies.forEach(enemy => enemy.update(gameState.canvas.width));
   gameState.coins.forEach(coin => coin.update());
+  if (gameState.princess) gameState.princess.update();
   if (gameState.particleSystem) {
     gameState.particleSystem.update();
   }
@@ -226,6 +237,18 @@ export function checkCollisions() {
         gameState.player.velocityY = JUMP_FORCE / 1.5;
         gameState.score += 20;
 
+        // Check if all enemies are defeated
+        const remainingEnemies = gameState.enemies.length;
+        if (remainingEnemies === 0 && gameState.princess) {
+          gameState.princess.canBeReached = true;
+          gameState.particleSystem.createScorePopup(
+            gameState.princess.x + gameState.princess.width / 2,
+            gameState.princess.y - 20,
+            "Princess can now be rescued!",
+            '#00ff00'
+          );
+        }
+
         // Play enemy defeat sound effect
         playSound('damage');
         playSound('coin');
@@ -244,19 +267,47 @@ export function checkCollisions() {
     }
   });
 
-  // Coin collisions
-  gameState.coins.forEach(coin => {
-    if (!coin.collected &&
-      gameState.player.x + gameState.player.width > coin.x &&
-      gameState.player.x < coin.x + coin.width &&
-      gameState.player.y + gameState.player.height > coin.y &&
-      gameState.player.y < coin.y + coin.height) {
-
-      coin.collected = true;
-      gameState.score += COIN_SCORE;
-      playSound('coin');
+  // Coin or princess collisions
+  if (gameState.currentLevel === 5) {
+    // Final level - check collision with princess
+    if (gameState.princess && !gameState.princess.isReached &&
+      gameState.player.x + gameState.player.width > gameState.princess.x &&
+      gameState.player.x < gameState.princess.x + gameState.princess.width &&
+      gameState.player.y + gameState.player.height > gameState.princess.y &&
+      gameState.player.y < gameState.princess.y + gameState.princess.height) {
+      if (gameState.princess.canBeReached && gameState.enemies.length === 0) {
+        gameState.princess.reach(gameState.particleSystem, gameState);
+        playSound('levelComplete');
+        // Game victory!
+        gameState.victory = true;
+        gameState.running = false;
+        gameState.over = true;
+        stopSound('backgroundMusic');
+        gameState.creditsPosition = 0;
+      } else {
+        gameState.particleSystem.createScorePopup(
+          gameState.princess.x + gameState.princess.width / 2,
+          gameState.princess.y - 20,
+          "Defeat all enemies first!",
+          '#ff0000'
+        );
+      }
     }
-  });
+  } else {
+    // Regular levels - check collision with coins
+    gameState.coins.forEach(coin => {
+      if (!coin.collected &&
+        gameState.player.x + gameState.player.width > coin.x &&
+        gameState.player.x < coin.x + coin.width &&
+        gameState.player.y + gameState.player.height > coin.y &&
+        gameState.player.y < coin.y + coin.height) {
+
+        coin.collected = true;
+        gameState.score += COIN_SCORE;
+        playSound('coin');
+      }
+    });
+  }
 }
 
 /**
@@ -265,7 +316,7 @@ export function checkCollisions() {
 export function checkLevelComplete() {
   const allCoinsCollected = gameState.coins.every(coin => coin.collected);
 
-  if (allCoinsCollected) {
+  if (allCoinsCollected && gameState.currentLevel < 5) {
     playSound('levelComplete');
     gameState.currentLevel++;
     loadNextLevel();
@@ -281,6 +332,7 @@ export function loadNextLevel() {
   gameState.platforms = [];
   gameState.enemies = [];
   gameState.coins = [];
+  gameState.princess = null;
 
   // Add a ground platform
   gameState.platforms.push({
@@ -289,6 +341,9 @@ export function loadNextLevel() {
     width: 800,
     height: 30
   });
+
+  // Special handling for final level (Level 5)
+  const isFinalLevel = gameState.currentLevel === 5;
 
   // Add platforms
   const platformCount = 4;
@@ -331,34 +386,58 @@ export function loadNextLevel() {
     ));
   }
 
-  // Add coins based on level
-  const coinCount = 5 + gameState.currentLevel;
-  for (let i = 0; i < coinCount; i++) {
-    let validPosition = false;
-    let coinX, coinY;
+  // Add coins or princess based on level
+  if (!isFinalLevel) {
+    const coinCount = 5 + gameState.currentLevel;
+    for (let i = 0; i < coinCount; i++) {
+      let validPosition = false;
+      let coinX, coinY;
 
-    let attempts = 0;
-    while (!validPosition && attempts < 50) {
-      coinX = Math.random() * (gameState.canvas.width - 50);
-      coinY = 100 + Math.random() * 300;
-      validPosition = true;
+      let attempts = 0;
+      while (!validPosition && attempts < 50) {
+        coinX = Math.random() * (gameState.canvas.width - 50);
+        coinY = 100 + Math.random() * 300;
+        validPosition = true;
 
-      for (const platform of gameState.platforms) {
-        if (coinX + 16 > platform.x &&
-          coinX < platform.x + platform.width &&
-          coinY + 16 > platform.y &&
-          coinY < platform.y + platform.height) {
-          validPosition = false;
-          break;
+        for (const platform of gameState.platforms) {
+          if (coinX + 16 > platform.x &&
+            coinX < platform.x + platform.width &&
+            coinY + 16 > platform.y &&
+            coinY < platform.y + platform.height) {
+            validPosition = false;
+            break;
+          }
         }
+        attempts++;
       }
-      attempts++;
-    }
 
-    gameState.coins.push(new Coin(
-      validPosition ? coinX : 50 + i * 50,
-      validPosition ? coinY : 100
-    ));
+      gameState.coins.push(new Coin(
+        validPosition ? coinX : 50 + i * 50,
+        validPosition ? coinY : 100
+      ));
+    }
+  } else {
+    // Add princess in final level
+    gameState.princess = new Princess(gameState.canvas.width - 150, 418);
+    // Add protective barriers as platforms
+    gameState.princess.castle.barriers.forEach(barrier => {
+      gameState.platforms.push(barrier);
+    });
+
+    // Add more enemies for final level challenge
+    for (let i = 0; i < 8; i++) {
+      const speed = 2 + Math.random() * 2;
+      const enemyType = Math.floor(Math.random() * 3);
+
+      gameState.enemies.push(new Enemy(
+        100 + Math.random() * (gameState.canvas.width - 200),
+        418,
+        32,
+        32,
+        speed,
+        enemyType
+      ));
+    }
   }
 }
 
@@ -366,9 +445,19 @@ export function loadNextLevel() {
  * Restart the game
  */
 export function restartGame() {
+  // Reset all game state variables
   gameState.over = false;
+  gameState.victory = false;
   gameState.currentLevel = 1;
   gameState.score = 0;
+  gameState.player = null;
+  gameState.platforms = [];
+  gameState.enemies = [];
+  gameState.coins = [];
+  gameState.princess = null;
+  if (gameState.princess && gameState.princess.castle) {
+    gameState.princess.castle.barriers = [];
+  }
   setupGame();
 }
 
@@ -444,6 +533,7 @@ export function render() {
 
   gameState.coins.forEach(coin => coin.render(ctx));
   gameState.enemies.forEach(enemy => enemy.render(ctx));
+  if (gameState.princess) gameState.princess.render(ctx);
   gameState.player.render(ctx);
   gameState.particleSystem.render(ctx);
 

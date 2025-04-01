@@ -22,7 +22,9 @@ function loadAssets() {
   const imagesToLoad = [
     { name: 'mario', src: 'assets/images/sprites/mario.svg' },
     { name: 'pepe', src: 'assets/images/sprites/pepe.svg' },
-    { name: 'enemies_sprite', src: 'assets/images/sprites/enemies.svg' }
+    { name: 'enemies_sprite', src: 'assets/images/sprites/enemies.svg' },
+    { name: 'princess_sprite', src: 'assets/images/sprites/princess.svg' },
+    { name: 'castle', src: 'assets/images/png/castle.png' }
   ];
 
   assets.total = imagesToLoad.length;
