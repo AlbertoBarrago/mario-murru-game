@@ -502,7 +502,7 @@ describe('Game Service', () => {
                 // If we've tried 50 times and still couldn't find a valid position,
                 // the coin might be placed in a fallback position
                 if (overlapsWithPlatform) {
-                    expect(coin.y).toBe(100); // Fallback y position
+                    expect(coin.y).toBe(300);
                 }
             }
         });

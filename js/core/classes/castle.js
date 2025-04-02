@@ -36,7 +36,7 @@ export default class Castle {
       );
     } else {
       // Fallback rendering
-      ctx.fillStyle = '#808080';
+      ctx.fillStyle = '#8B4513';
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
