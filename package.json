@@ -9,8 +9,8 @@
     "scripts": {
         "start": "webpack serve --mode development",
         "dev": "webpack serve --mode development",
-        "lint": "eslint js/",
-        "lint:fix": "eslint js/ --fix",
+        "lint": "eslint src/js",
+        "lint:fix": "eslint src/js/ --fix",
         "test": "jest",
         "build": "webpack --mode production"
     },
