@@ -14,9 +14,9 @@ import {
     render,
     renderUI,
     drawPauseOverlay
-} from '../js/logic/services/game';
-import { playSound, sounds, stopSound } from '../js/logic/classes/sound';
-import { Player, Enemy, Coin, ParticleSystem } from '../js/logic/index';
+} from '../src/js/logic/services/game';
+import { playSound, sounds, stopSound } from '../src/js/logic/classes/sound';
+import { Player, Enemy, Coin, ParticleSystem } from '../src/js/logic/index';
 
 const mockContext = {
     clearRect: jest.fn(),
@@ -45,7 +45,7 @@ const mockCanvas = {
 };
 
 // Mock sound module
-jest.mock('../js/logic/classes/sound', () => ({
+jest.mock('../src/js/logic/classes/sound', () => ({
     playSound: jest.fn(),
     stopSound: jest.fn(),
     sounds: {
@@ -57,7 +57,7 @@ jest.mock('../js/logic/classes/sound', () => ({
 }));
 
 // Mock Player class
-jest.mock('../js/logic/classes/player', () => {
+jest.mock('../src/js/logic/classes/player', () => {
     return jest.fn().mockImplementation(() => ({
         x: 100,
         y: 300,
@@ -79,7 +79,7 @@ jest.mock('../js/logic/classes/player', () => {
 });
 
 // Mock Enemy class
-jest.mock('../js/logic/classes/enemy', () => {
+jest.mock('../src/js/logic/classes/enemy', () => {
     return jest.fn().mockImplementation(() => ({
         x: 300,
         y: 418,
@@ -93,7 +93,7 @@ jest.mock('../js/logic/classes/enemy', () => {
 });
 
 // Mock Coin class
-jest.mock('../js/logic/classes/coin', () => {
+jest.mock('../src/js/logic/classes/coin', () => {
     return jest.fn().mockImplementation(() => ({
         x: 150,
         y: 300,
@@ -106,7 +106,7 @@ jest.mock('../js/logic/classes/coin', () => {
 });
 
 // Mock ParticleSystem class
-jest.mock('../js/logic/classes/particles', () => {
+jest.mock('../src/js/logic/classes/particles', () => {
     return jest.fn().mockImplementation(() => ({
         update: jest.fn(),
         render: jest.fn(),
@@ -365,7 +365,7 @@ describe('Game Service', () => {
             gameState.enemies[0].height = 32;
 
             const mockJumpForce = -10;
-            jest.mock('../js/constants', () => ({
+            jest.mock('../src/js/constants', () => ({
                 JUMP_FORCE: mockJumpForce
             }));
 

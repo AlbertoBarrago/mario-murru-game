@@ -1,4 +1,4 @@
-import Castle from '../js/logic/classes/castle';
+import Castle from '../src/js/logic/classes/castle';
 
 describe('Castle', () => {
     let castle;

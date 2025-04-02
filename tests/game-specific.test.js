@@ -1,14 +1,13 @@
 import { jest } from '@jest/globals';
 import {
     initGameState,
-    getGameState,
     checkCollisions,
     loadNextLevel,
     restartGame,
     quitGame
-} from '../js/logic/services/game';
-import { playSound, stopSound } from '../js/logic/classes/sound';
-import { Player, Enemy, Coin, Princess, ParticleSystem } from '../js/logic/index';
+} from '../src/js/logic/services/game';
+import { playSound, stopSound } from '../src/js/logic/classes/sound';
+import { Player, Enemy, Princess, ParticleSystem } from '../src/js/logic/index';
 
 // Mock the necessary dependencies
 const mockContext = {
@@ -31,7 +30,7 @@ const mockCanvas = {
 };
 
 // Mock sound module
-jest.mock('../js/logic/classes/sound', () => ({
+jest.mock('../src/js/logic/classes/sound', () => ({
     playSound: jest.fn(),
     stopSound: jest.fn(),
     sounds: {
@@ -43,7 +42,7 @@ jest.mock('../js/logic/classes/sound', () => ({
 }));
 
 // Mock Player class
-jest.mock('../js/logic/classes/player', () => {
+jest.mock('../src/js/logic/classes/player', () => {
     return jest.fn().mockImplementation(() => ({
         x: 100,
         y: 300,
@@ -65,7 +64,7 @@ jest.mock('../js/logic/classes/player', () => {
 });
 
 // Mock Enemy class
-jest.mock('../js/logic/classes/enemy', () => {
+jest.mock('../src/js/logic/classes/enemy', () => {
     return jest.fn().mockImplementation(() => ({
         x: 300,
         y: 418,
@@ -79,7 +78,7 @@ jest.mock('../js/logic/classes/enemy', () => {
 });
 
 // Mock Coin class
-jest.mock('../js/logic/classes/coin', () => {
+jest.mock('../src/js/logic/classes/coin', () => {
     return jest.fn().mockImplementation(() => ({
         x: 150,
         y: 300,
@@ -92,7 +91,7 @@ jest.mock('../js/logic/classes/coin', () => {
 });
 
 // Mock Princess class
-jest.mock('../js/logic/classes/princess', () => {
+jest.mock('../src/js/logic/classes/princess', () => {
     return jest.fn().mockImplementation(() => ({
         x: 650,
         y: 418,
@@ -110,7 +109,7 @@ jest.mock('../js/logic/classes/princess', () => {
 });
 
 // Mock ParticleSystem class
-jest.mock('../js/logic/classes/particles', () => {
+jest.mock('../src/js/logic/classes/particles', () => {
     return jest.fn().mockImplementation(() => ({
         update: jest.fn(),
         render: jest.fn(),
