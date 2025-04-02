@@ -3,12 +3,12 @@ const sounds = {};
 
 // Define sound paths
 const soundPaths = {
-  jump: '../../../assets/sounds/jump.wav',
-  coin: '../../../assets/sounds/coin.wav',
-  damage: '../../../assets/sounds/damage.wav',
-  gameOver: '../../../assets/sounds/game-over.wav',
-  levelComplete: '../../../assets/sounds/level-complete.wav',
-  backgroundMusic: '../../../assets/sounds/background.mp3'
+  jump: '../../../public/sounds/jump.wav',
+  coin: '../../../public/sounds/coin.wav',
+  damage: '../../../public/sounds/damage.wav',
+  gameOver: '../../../public/sounds/game-over.wav',
+  levelComplete: '../../../public/sounds/level-complete.wav',
+  backgroundMusic: '../../../public/sounds/background.mp3'
 };
 
 /**

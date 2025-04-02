@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    entry: './js/index.js',
+    entry: './src/js/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'js/bundle.[contenthash].js',
@@ -28,9 +28,9 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|jpeg|gif|wav|mp3)$/i,
-                type: 'asset/resource',
+                type: '/public/resource',
                 generator: {
-                    filename: 'assets/[path][name][ext]',
+                    filename: 'public/[path][name][ext]',
                     publicPath: './',
                 },
             },
@@ -55,8 +55,8 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: 'assets',
-                    to: 'assets',
+                    from: 'public',
+                    to: 'public',
                     globOptions: {
                         ignore: ['**/.DS_Store']
                     }
