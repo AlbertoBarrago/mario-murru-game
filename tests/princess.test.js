@@ -1,5 +1,5 @@
-import Princess from '../js/logic/classes/princess';
-import Castle from '../js/logic/classes/castle';
+import Princess from '../src/js/logic/classes/princess';
+import Castle from '../src/js/logic/classes/castle';
 
 describe('Princess', () => {
     let princess;

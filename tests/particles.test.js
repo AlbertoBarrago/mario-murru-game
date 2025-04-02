@@ -1,4 +1,4 @@
-import Particles from '../js/logic/classes/particles.js';
+import Particles from '../src/js/logic/classes/particles.js';
 
 describe('Particles', () => {
     let particles;

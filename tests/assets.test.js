@@ -1,4 +1,4 @@
-import { assets, loadAssets, checkAssetsLoaded } from '../js/public';
+import { assets, loadAssets, checkAssetsLoaded } from '../src/js/assets';
 
 describe('Assets', () => {
     let originalImage;
