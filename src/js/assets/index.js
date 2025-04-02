@@ -2,8 +2,8 @@
  * @typedef {Object} Assets
  * @property {Object.<string, HTMLImageElement>} images - Collection of loaded game images
  * @property {Object.<string, HTMLAudioElement>} sounds - Collection of loaded game sounds
- * @property {number} loaded - Counter for loaded assets
- * @property {number} total - Total number of assets to load
+ * @property {number} loaded - Counter for loaded public
+ * @property {number} total - Total number of public to load
  */
 
 /** @type {Assets} */
@@ -15,16 +15,16 @@ const assets = {
 };
 
 /**
- * Initiates loading of all game assets
+ * Initiates loading of all game public
  * @function
  */
 function loadAssets() {
   const imagesToLoad = [
-    { name: 'mario', src: 'assets/images/sprites/mario.svg' },
-    { name: 'pepe', src: 'assets/images/sprites/pepe.svg' },
-    { name: 'enemies_sprite', src: 'assets/images/sprites/enemies.svg' },
-    { name: 'princess_sprite', src: 'assets/images/sprites/princess.svg' },
-    { name: 'castle', src: 'assets/images/png/castle.png' }
+    { name: 'mario', src: 'public/images/sprites/mario.svg' },
+    { name: 'pepe', src: 'public/images/sprites/pepe.svg' },
+    { name: 'enemies_sprite', src: 'public/images/sprites/enemies.svg' },
+    { name: 'princess_sprite', src: 'public/images/sprites/princess.svg' },
+    { name: 'castle', src: 'public/images/png/castle.png' }
   ];
 
   assets.total = imagesToLoad.length;
@@ -47,8 +47,8 @@ function loadAssets() {
 }
 
 /**
- * Checks if all assets have finished loading
- * @param {Function} onComplete - Callback function to execute when all assets are loaded
+ * Checks if all public have finished loading
+ * @param {Function} onComplete - Callback function to execute when all public are loaded
  */
 function checkAssetsLoaded(onComplete) {
   if (assets.loaded === assets.total) {

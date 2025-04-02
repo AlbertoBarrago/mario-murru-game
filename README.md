@@ -12,7 +12,7 @@ A simple 2D platformer game inspired by classic Mario Bros games, featuring a ch
 Mario Murru is a 2D platformer where you control the hero, Mario Murru, as he jumps on platforms, collects coins, and defeats enemies. The game features simple physics, collision detection, and sprite animations.
 
 ## Screenshots
-![Game Screenshot 1](assets/images/screenshots/demo.png)
+![Game Screenshot 1](public/images/screenshots/demo.png)
 
 ## How to Play
 

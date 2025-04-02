@@ -1,11 +1,11 @@
-import { assets, loadAssets, checkAssetsLoaded } from '../js/assets';
+import { assets, loadAssets, checkAssetsLoaded } from '../js/public';
 
 describe('Assets', () => {
     let originalImage;
     let mockImage;
 
     beforeEach(() => {
-        // Reset assets state
+        // Reset public state
         assets.images = {};
         assets.sounds = {};
         assets.loaded = 0;
@@ -53,7 +53,7 @@ describe('Assets', () => {
             // Simulate error on first image
             mockImages[0].onerror();
 
-            expect(console.error).toHaveBeenCalledWith('Failed to load image: assets/images/sprites/mario.svg');
+            expect(console.error).toHaveBeenCalledWith('Failed to load image: public/images/sprites/mario.svg');
             expect(assets.images['mario']).toBeDefined();
             expect(assets.images['mario'].src).toContain('data:image/png;base64');
             expect(assets.loaded).toBe(1);
@@ -72,7 +72,7 @@ describe('Assets', () => {
     });
 
     describe('checkAssetsLoaded', () => {
-        it('should call onComplete when all assets are loaded', () => {
+        it('should call onComplete when all public are loaded', () => {
             const onComplete = jest.fn();
             assets.loaded = 5;
             assets.total = 5;
@@ -83,7 +83,7 @@ describe('Assets', () => {
             expect(onComplete).toHaveBeenCalled();
         });
 
-        it('should not call onComplete when assets are still loading', () => {
+        it('should not call onComplete when public are still loading', () => {
             jest.useFakeTimers();
             const onComplete = jest.fn();
             assets.loaded = 3;

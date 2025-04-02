@@ -1,7 +1,7 @@
 // Import modules
 import '../css/style.css';
 import { checkAssetsLoaded, loadAssets } from './assets';
-import { initSounds, toggleMute } from './core/classes/sound.js';
+import { initSounds, toggleMute } from './logic/classes/sound.js';
 import {
   initGameState,
   getGameState,
@@ -12,7 +12,7 @@ import {
   togglePause,
   restartGame,
   quitGame
-} from './core/services/game.js';
+} from './logic/services/game.js';
 
 const canvas = document.getElementById('gameCanvas');
 if (!canvas) {

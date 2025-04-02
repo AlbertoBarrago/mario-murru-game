@@ -1,7 +1,7 @@
-import Player from '../js/core/classes/player.js';
+import Player from '../js/logic/classes/player.js';
 import { GRAVITY, MAX_HEALTH } from "../js/constants";
 
-jest.mock('../js/core/classes/sound.js', () => ({
+jest.mock('../js/logic/classes/sound.js', () => ({
     playSound: jest.fn(),
     stopSound: jest.fn(),
     toggleMute: jest.fn(),

@@ -6,9 +6,9 @@ import {
     loadNextLevel,
     restartGame,
     quitGame
-} from '../js/core/services/game';
-import { playSound, stopSound } from '../js/core/classes/sound';
-import { Player, Enemy, Coin, Princess, ParticleSystem } from '../js/core/index';
+} from '../js/logic/services/game';
+import { playSound, stopSound } from '../js/logic/classes/sound';
+import { Player, Enemy, Coin, Princess, ParticleSystem } from '../js/logic/index';
 
 // Mock the necessary dependencies
 const mockContext = {
@@ -31,7 +31,7 @@ const mockCanvas = {
 };
 
 // Mock sound module
-jest.mock('../js/core/classes/sound', () => ({
+jest.mock('../js/logic/classes/sound', () => ({
     playSound: jest.fn(),
     stopSound: jest.fn(),
     sounds: {
@@ -43,7 +43,7 @@ jest.mock('../js/core/classes/sound', () => ({
 }));
 
 // Mock Player class
-jest.mock('../js/core/classes/player', () => {
+jest.mock('../js/logic/classes/player', () => {
     return jest.fn().mockImplementation(() => ({
         x: 100,
         y: 300,
@@ -65,7 +65,7 @@ jest.mock('../js/core/classes/player', () => {
 });
 
 // Mock Enemy class
-jest.mock('../js/core/classes/enemy', () => {
+jest.mock('../js/logic/classes/enemy', () => {
     return jest.fn().mockImplementation(() => ({
         x: 300,
         y: 418,
@@ -79,7 +79,7 @@ jest.mock('../js/core/classes/enemy', () => {
 });
 
 // Mock Coin class
-jest.mock('../js/core/classes/coin', () => {
+jest.mock('../js/logic/classes/coin', () => {
     return jest.fn().mockImplementation(() => ({
         x: 150,
         y: 300,
@@ -92,7 +92,7 @@ jest.mock('../js/core/classes/coin', () => {
 });
 
 // Mock Princess class
-jest.mock('../js/core/classes/princess', () => {
+jest.mock('../js/logic/classes/princess', () => {
     return jest.fn().mockImplementation(() => ({
         x: 650,
         y: 418,
@@ -110,7 +110,7 @@ jest.mock('../js/core/classes/princess', () => {
 });
 
 // Mock ParticleSystem class
-jest.mock('../js/core/classes/particles', () => {
+jest.mock('../js/logic/classes/particles', () => {
     return jest.fn().mockImplementation(() => ({
         update: jest.fn(),
         render: jest.fn(),

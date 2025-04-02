@@ -1,4 +1,4 @@
-import Castle from '../js/core/classes/castle';
+import Castle from '../js/logic/classes/castle';
 
 describe('Castle', () => {
     let castle;
@@ -15,7 +15,7 @@ describe('Castle', () => {
             drawImage: jest.fn()
         };
 
-        // Mock assets
+        // Mock public
         global.assets = {
             images: {
                 castle: null

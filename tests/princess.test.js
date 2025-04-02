@@ -1,5 +1,5 @@
-import Princess from '../js/core/classes/princess';
-import Castle from '../js/core/classes/castle';
+import Princess from '../js/logic/classes/princess';
+import Castle from '../js/logic/classes/castle';
 
 describe('Princess', () => {
     let princess;
@@ -29,7 +29,7 @@ describe('Princess', () => {
             enemies: []
         };
 
-        // Mock assets
+        // Mock public
         global.assets = {
             images: {
                 princess_sprite: null,
