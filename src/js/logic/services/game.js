@@ -277,7 +277,7 @@ export function checkCollisions() {
       gameState.player.y < gameState.princess.y + gameState.princess.height) {
       if (gameState.princess.canBeReached && gameState.enemies.length === 0) {
         gameState.princess.reach(gameState.particleSystem, gameState);
-        playSound('levelComplete');
+        playSound('gameComplete');
         // Game victory!
         gameState.victory = true;
         gameState.running = false;
@@ -332,11 +332,7 @@ export function checkLevelComplete() {
 
   // Advance to next level if all coins are collected OR all enemies are defeated
   if ((allCoinsCollected || allEnemiesDefeated) && gameState.currentLevel < LAST_LEVEL) {
-    if (gameState.currentLevel === LAST_LEVEL) {
-      playSound('gameComplete');
-    } else {
-      playSound('levelComplete');
-    }
+    playSound('levelComplete');
     gameState.currentLevel++;
     loadNextLevel();
   }
