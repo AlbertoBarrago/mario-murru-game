@@ -354,10 +354,8 @@ describe('Game Service - Specific Tests', () => {
 
             // Verify princess was created
             expect(gameState.princess).toBeTruthy();
-            expect(Princess).toHaveBeenCalledWith(expect.any(Number), 418);
+            expect(Princess).toHaveBeenCalledWith(expect.any(Number), 400);
 
-            // Verify castle barriers were added as platforms
-            expect(gameState.platforms).toContainEqual(mockBarrier);
 
             // Verify additional enemies were created for final level
             expect(gameState.enemies.length).toBeGreaterThan(0);

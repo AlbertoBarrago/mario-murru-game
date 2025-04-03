@@ -8,6 +8,7 @@
  * @constant {number} INITIAL_LIVES - Starting number of lives for the player
  * @constant {number} ENEMY_DAMAGE - Damage dealt by enemies on contact
  * @constant {number} COIN_SCORE - Score points awarded for collecting a coin
+ * @constant {number} LAST_LEVEL - The last level in the game
  */
 
 export const GRAVITY = 0.5;
@@ -18,3 +19,4 @@ export const MAX_HEALTH = 100;
 export const INITIAL_LIVES = 3;
 export const ENEMY_DAMAGE = 25;
 export const COIN_SCORE = 10;
+export const LAST_LEVEL = 5;

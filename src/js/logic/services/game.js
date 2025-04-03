@@ -1,5 +1,5 @@
 import { playSound, sounds, stopSound } from '../classes/sound.js';
-import { COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE } from '../../constants';
+import { COIN_SCORE, ENEMY_DAMAGE, INITIAL_LIVES, JUMP_FORCE, LAST_LEVEL } from '../../constants';
 import { Coin, Enemy, ParticleSystem, Player, Princess } from '../index';
 
 const gameState = {
@@ -65,7 +65,7 @@ export function startGame(skipToFinal = false) {
 
   // Skip to final level if requested
   if (skipToFinal) {
-    gameState.currentLevel = 5;
+    gameState.currentLevel = LAST_LEVEL;
     loadNextLevel();
   }
 }
@@ -115,7 +115,7 @@ export function setupGame() {
 
   gameState.enemies.push(new Enemy(300, 418, 32, 32, 2));
 
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < LAST_LEVEL; i++) {
     gameState.coins.push(new Coin(150 + i * 120, 300));
   }
 }
@@ -268,7 +268,7 @@ export function checkCollisions() {
   });
 
   // Coin or princess collisions
-  if (gameState.currentLevel === 5) {
+  if (gameState.currentLevel === LAST_LEVEL) {
     // Final level - check collision with princess
     if (gameState.princess && !gameState.princess.isReached &&
       gameState.player.x + gameState.player.width > gameState.princess.x &&
@@ -293,6 +293,19 @@ export function checkCollisions() {
         );
       }
     }
+
+    gameState.coins.forEach(coin => {
+      if (!coin.collected &&
+        gameState.player.x + gameState.player.width > coin.x &&
+        gameState.player.x < coin.x + coin.width &&
+        gameState.player.y + gameState.player.height > coin.y &&
+        gameState.player.y < coin.y + coin.height) {
+
+        coin.collected = true;
+        gameState.score += COIN_SCORE;
+        playSound('coin');
+      }
+    });
   } else {
     // Regular levels - check collision with coins
     gameState.coins.forEach(coin => {
@@ -315,9 +328,15 @@ export function checkCollisions() {
  */
 export function checkLevelComplete() {
   const allCoinsCollected = gameState.coins.every(coin => coin.collected);
+  const allEnemiesDefeated = gameState.enemies.length === 0;
 
-  if (allCoinsCollected && gameState.currentLevel < 5) {
-    playSound('levelComplete');
+  // Advance to next level if all coins are collected OR all enemies are defeated
+  if ((allCoinsCollected || allEnemiesDefeated) && gameState.currentLevel < LAST_LEVEL) {
+    if (gameState.currentLevel === LAST_LEVEL) {
+      playSound('gameComplete');
+    } else {
+      playSound('levelComplete');
+    }
     gameState.currentLevel++;
     loadNextLevel();
   }
@@ -329,12 +348,11 @@ export function checkLevelComplete() {
 export function loadNextLevel() {
   gameState.player.reset(100, 300);
 
+  // Generate platforms for the new level
+  const platformCount = 3 + gameState.currentLevel;
   gameState.platforms = [];
-  gameState.enemies = [];
-  gameState.coins = [];
-  gameState.princess = null;
 
-  // Add a ground platform
+  // Always add a ground platform
   gameState.platforms.push({
     x: 0,
     y: 450,
@@ -342,101 +360,118 @@ export function loadNextLevel() {
     height: 30
   });
 
-  // Special handling for final level (Level 5)
-  const isFinalLevel = gameState.currentLevel === 5;
-
-  // Add platforms
-  const platformCount = 4;
+  // Add additional platforms
   for (let i = 0; i < platformCount; i++) {
+    const platformWidth = Math.random() * 200 + 100;
+    const platformX = Math.random() * (gameState.canvas.width - platformWidth);
+    const platformY = Math.random() * 250 + 150; // Keep platforms in a reasonable height range
+
     gameState.platforms.push({
-      x: Math.random() * (gameState.canvas.width - 100),
-      y: 150 + Math.random() * 250,
-      width: 70 + Math.random() * 100,
+      x: platformX,
+      y: platformY,
+      width: platformWidth,
       height: 20
     });
   }
 
-  // Define number of enemy types (3 types: Goomba, Koopa, Ghost)
-  const numberOfEnemyTypes = 3;
-
-  // Add enemies based on level
-  for (let i = 0; i < gameState.currentLevel; i++) {
-    const speed = 1 + Math.random() * gameState.currentLevel;
-
-    // Determine enemy type
-    let enemyType;
-
-    if (gameState.currentLevel <= numberOfEnemyTypes) {
-      enemyType = gameState.currentLevel - 1;
-    } else {
-      // For later levels, mix up all enemy types
-      enemyType = Math.floor(Math.random() * numberOfEnemyTypes);
-    }
-
-    // Adjust y position based on enemy type (optional)
-    let yPosition = 418; // Default y position
-
-    gameState.enemies.push(new Enemy(
-      100 + Math.random() * (gameState.canvas.width - 200),
-      yPosition,
-      32,
-      32,
-      speed,
-      enemyType
-    ));
+  // Aggiungi la principessa nel livello 5
+  if (gameState.currentLevel === 5) {
+    gameState.princess = new Princess(700, 400);
+  } else {
+    gameState.princess = null;
   }
 
-  // Add coins or princess based on level
-  if (!isFinalLevel) {
-    const coinCount = 5 + gameState.currentLevel;
-    for (let i = 0; i < coinCount; i++) {
-      let validPosition = false;
-      let coinX, coinY;
+  // Generate enemies - FIX: Ensure enemies are properly created
+  const enemyCount = Math.min(gameState.currentLevel, 5); // Cap at 5 enemies
+  gameState.enemies = [];
+  for (let i = 0; i < enemyCount; i++) {
+    // Place enemies on platforms - prioritize ground platform for stability
+    const platformIndex = i === 0 ? 0 : Math.floor(Math.random() * gameState.platforms.length);
+    const platform = gameState.platforms[platformIndex];
 
-      let attempts = 0;
-      while (!validPosition && attempts < 50) {
-        coinX = Math.random() * (gameState.canvas.width - 50);
-        coinY = 100 + Math.random() * 300;
-        validPosition = true;
+    // Create enemy with proper parameters - ensure enemy stays on platform
+    const enemyWidth = 32;
+    const enemyHeight = 32;
+    const enemySpeed = 2;
 
-        for (const platform of gameState.platforms) {
-          if (coinX + 16 > platform.x &&
-            coinX < platform.x + platform.width &&
-            coinY + 16 > platform.y &&
-            coinY < platform.y + platform.height) {
-            validPosition = false;
-            break;
-          }
+    // Ensure enemy is placed with enough space from the edges
+    const safeMargin = 20; // Safety margin to prevent falling off
+    const availableWidth = platform.width - enemyWidth - (safeMargin * 2);
+
+    // Only spawn if platform is wide enough
+    if (availableWidth > 0) {
+      const enemyX = platform.x + safeMargin + (Math.random() * availableWidth);
+      const enemyY = platform.y - enemyHeight;
+
+      const enemy = new Enemy(
+        enemyX,
+        enemyY,
+        enemyWidth,
+        enemyHeight,
+        enemySpeed
+      );
+
+      gameState.enemies.push(enemy);
+    }
+  }
+
+  // Generate coins with reachability check
+  const coinCount = 5 + gameState.currentLevel * 2;
+  gameState.coins = [];
+
+  // Maximum jump height calculation (approximate)
+  const maxJumpHeight = 225; // Fixed value based on testing actual jump height
+
+  for (let i = 0; i < coinCount; i++) {
+    const coin = new Coin();
+    let validPosition = false;
+    let attempts = 0;
+    const maxAttempts = 50; // Prevent infinite loops
+
+    // Try to find a valid position for the coin
+    while (!validPosition && attempts < maxAttempts) {
+      attempts++;
+
+      // Random position
+      coin.x = Math.random() * (gameState.canvas.width - coin.width);
+      coin.y = Math.random() * (gameState.canvas.height - 100 - coin.height) + 50;
+
+      validPosition = true;
+
+      // Check if coin is on a platform
+      for (const platform of gameState.platforms) {
+        if (coin.x + coin.width > platform.x &&
+          coin.x < platform.x + platform.width &&
+          coin.y + coin.height > platform.y &&
+          coin.y < platform.y + platform.height) {
+          // Coin is inside a platform, place it above
+          coin.y = platform.y - coin.height - 5;
+          break;
         }
-        attempts++;
       }
 
-      gameState.coins.push(new Coin(
-        validPosition ? coinX : 50 + i * 50,
-        validPosition ? coinY : 100
-      ));
+      // Check if coin is reachable from any platform
+      let reachable = false;
+      for (const platform of gameState.platforms) {
+        // Check if coin is directly above or near a platform within jump range
+        if (coin.x + coin.width > platform.x - 30 &&
+          coin.x < platform.x + platform.width + 30 &&
+          coin.y > platform.y - maxJumpHeight &&
+          coin.y < platform.y) {
+          reachable = true;
+          break;
+        }
+      }
+
+      // If not reachable, try again
+      if (!reachable) {
+        validPosition = false;
+      }
     }
-  } else {
-    // Add princess in final level
-    gameState.princess = new Princess(gameState.canvas.width - 150, 418);
-    // Add protective barriers as platforms
-    gameState.princess.castle.barriers.forEach(barrier => {
-      gameState.platforms.push(barrier);
-    });
 
-    // Add more enemies for final level challenge
-    for (let i = 0; i < 8; i++) {
-      const speed = 2 + Math.random() * 2;
-      const enemyType = Math.floor(Math.random() * 3);
-
-      gameState.enemies.push(new Enemy(
-        100 + Math.random() * (gameState.canvas.width - 200),
-        418,
-        32,
-        32,
-        speed,
-        enemyType
-      ));
+    // Only add the coin if we found a valid position
+    if (validPosition) {
+      gameState.coins.push(coin);
     }
   }
 }

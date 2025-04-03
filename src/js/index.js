@@ -1,7 +1,7 @@
 // Import modules
 import '../css/style.css';
 import { checkAssetsLoaded, loadAssets } from './assets';
-import { initSounds, toggleMute } from './logic/classes/sound.js';
+import { initSounds, playSound, toggleMute } from './logic/classes/sound.js';
 import {
   initGameState,
   getGameState,
