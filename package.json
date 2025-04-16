@@ -1,7 +1,7 @@
 {
     "name": "mario-murru-game",
     "version": "1.4.0",
-    "description": "A Mario-style platformed game featuring Mario Murru",
+    "description": "A Mario-style platformed game built with JavaScript.",
     "main": "index.html",
     "engines": {
         "node": ">=20.0.0"
