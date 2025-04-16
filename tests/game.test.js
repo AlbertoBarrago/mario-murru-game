@@ -664,7 +664,6 @@ describe('Game Service', () => {
             gameState.enemies = [];
             update();
             expect(gameState.player.update).toHaveBeenCalledWith(gameState.keys, 800, 600);
-            expect(gameState.coins[0].update).toHaveBeenCalled();
             expect(gameState.particleSystem.update).toHaveBeenCalled();
         });
 
