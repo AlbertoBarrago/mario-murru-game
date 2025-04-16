@@ -7,6 +7,9 @@ A simple 2D platformer game inspired by classic Mario Bros games, featuring a ch
 [![codecov](https://codecov.io/gh/AlbertoBarrago/mario-murru-game/graph/badge.svg?token=9RZBAV2L2S)](https://codecov.io/gh/AlbertoBarrago/mario-murru-game)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/6ed2a33f-382a-4e94-bb3b-98f314296f55/deploy-status)](https://app.netlify.com/sites/mario-murru-the-game/deploys)
 
+## Demo 
+[Play the game 🚀](https://mario-murru-the-game.netlify.app/)
+
 ## Game Description
 
 Mario Murru is a 2D platformer where you control the hero, Mario Murru, as he jumps on platforms, collects coins, and defeats enemies. The game features simple physics, collision detection, and sprite animations.
