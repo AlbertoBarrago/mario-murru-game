@@ -135,7 +135,7 @@ export default class Player {
     // Draw the sprite
     try {
       const img = new Image();
-      img.src = `assets/images/sprites/${spriteSheet}.svg`;
+      img.src = `public/images/sprites/${spriteSheet}.svg`;
       ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
     } catch (e) {
       // Fallback to colored rectangles if image fails to load
