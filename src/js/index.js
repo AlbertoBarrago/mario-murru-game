@@ -1,7 +1,7 @@
 // Import modules
-import '../css/style.css';
-import { checkAssetsLoaded, loadAssets } from './assets';
-import { initSounds, playSound, toggleMute } from './logic/classes/sound.js';
+import "../css/style.css";
+import { checkAssetsLoaded, loadAssets } from "./assets";
+import { initSounds, toggleMute } from "./logic/classes/sound.js";
 import {
   initGameState,
   getGameState,
@@ -11,12 +11,12 @@ import {
   render,
   togglePause,
   restartGame,
-  quitGame
-} from './logic/services/game.js';
+  quitGame,
+} from "./logic/services/game.js";
 
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById("gameCanvas");
 if (!canvas) {
-  console.error('Canvas element not found!');
+  console.error("Canvas element not found!");
 }
 
 const gameState = initGameState(canvas);
@@ -28,7 +28,7 @@ function init() {
   try {
     initSounds();
   } catch (error) {
-    console.error('Failed to initialize sounds:', error);
+    console.error("Failed to initialize sounds:", error);
   }
 
   setupEventListeners();
@@ -45,35 +45,35 @@ function init() {
  * Set up event listeners for keyboard input
  */
 function setupEventListeners() {
-  window.addEventListener('keydown', (e) => {
+  window.addEventListener("keydown", (e) => {
     gameState.keys[e.code] = true;
 
-    if (e.code === 'KeyM') {
+    if (e.code === "KeyM") {
       toggleMute();
     }
 
-    if (e.code === 'Enter' && !gameState.started) {
-      const startScreen = document.getElementById('startScreen');
+    if (e.code === "Enter" && !gameState.started) {
+      const startScreen = document.getElementById("startScreen");
       if (startScreen) {
-        startScreen.style.display = 'none';
+        startScreen.style.display = "none";
       }
       startGame(e.shiftKey);
     }
 
-    if (e.code === 'KeyP' && gameState.started) {
+    if (e.code === "KeyP" && gameState.started) {
       togglePause();
     }
 
-    if (e.code === 'KeyQ' && gameState.started && !gameState.over) {
+    if (e.code === "KeyQ" && gameState.started && !gameState.over) {
       quitGame();
     }
 
-    if (e.code === 'KeyR' && gameState.over) {
+    if (e.code === "KeyR" && gameState.over) {
       restartGame();
     }
   });
 
-  window.addEventListener('keyup', (e) => {
+  window.addEventListener("keyup", (e) => {
     gameState.keys[e.code] = false;
   });
 }
@@ -111,29 +111,29 @@ function gameLoop() {
 function renderGameOver() {
   const { ctx, canvas, score, keys, victory } = gameState;
 
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+  ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (victory) {
     ctx.save();
-    ctx.fillStyle = '#FFD700';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
+    ctx.fillStyle = "#FFD700";
+    ctx.font = "48px Arial";
+    ctx.textAlign = "center";
 
     const credits = [
-      'YOU SAVED THE PRINCESS!',
-      '',
-      'Final Score: ' + score,
-      '',
-      'Special Thanks To:',
-      '',
-      'The World of Internet',
-      'For its endless inspiration',
-      '',
-      'Alberto Barrago',
-      'The Creator',
-      '',
-      'Press R to play again'
+      "YOU SAVED THE PRINCESS!",
+      "",
+      "Final Score: " + score,
+      "",
+      "Special Thanks To:",
+      "",
+      "The World of Internet",
+      "For its endless inspiration",
+      "",
+      "Alberto Barrago",
+      "The Creator",
+      "",
+      "Press R to play again",
     ];
 
     const lineHeight = 40;
@@ -141,27 +141,35 @@ function renderGameOver() {
     const startY = (canvas.height - totalHeight) / 2;
 
     credits.forEach((line, index) => {
-      const y = startY + (index * lineHeight);
+      const y = startY + index * lineHeight;
       ctx.fillText(line, canvas.width / 2, y);
     });
 
     ctx.restore();
   } else {
-    ctx.fillStyle = '#fff';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 40);
+    ctx.fillStyle = "#fff";
+    ctx.font = "48px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 40);
 
-    ctx.font = '24px Arial';
-    ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
+    ctx.font = "24px Arial";
+    ctx.fillText(
+      `Final Score: ${score}`,
+      canvas.width / 2,
+      canvas.height / 2 + 10,
+    );
 
-    ctx.font = '18px Arial';
-    ctx.fillText('Press R to restart', canvas.width / 2, canvas.height / 2 + 50);
+    ctx.font = "18px Arial";
+    ctx.fillText(
+      "Press R to restart",
+      canvas.width / 2,
+      canvas.height / 2 + 50,
+    );
   }
 
-  ctx.textAlign = 'left';
+  ctx.textAlign = "left";
 
-  if (keys['KeyR']) {
+  if (keys["KeyR"]) {
     restartGame();
   }
 }
