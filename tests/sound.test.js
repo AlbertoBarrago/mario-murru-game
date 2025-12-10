@@ -1,4 +1,4 @@
-jest.mock('../src/js/logic/classes/sound.js', () => ({
+jest.mock("../src/js/logic/classes/sound.js", () => ({
   initSounds: jest.fn(),
   playSound: jest.fn(),
   stopSound: jest.fn(),
@@ -6,29 +6,29 @@ jest.mock('../src/js/logic/classes/sound.js', () => ({
   sounds: {}
 }));
 
-import { initSounds, playSound, stopSound, toggleMute } from '../src/js/logic/classes/sound.js';
+import { initSounds, playSound, stopSound, toggleMute } from "../src/js/logic/classes/sound.js";
 
-describe('Sound module', () => {
+describe("Sound module", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should call initSounds', () => {
+  test("should call initSounds", () => {
     initSounds();
     expect(initSounds).toHaveBeenCalled();
   });
 
-  test('should call playSound with correct sound name', () => {
-    playSound('jump');
-    expect(playSound).toHaveBeenCalledWith('jump');
+  test("should call playSound with correct sound name", () => {
+    playSound("jump");
+    expect(playSound).toHaveBeenCalledWith("jump");
   });
 
-  test('should call stopSound with correct sound name', () => {
-    stopSound('jump');
-    expect(stopSound).toHaveBeenCalledWith('jump');
+  test("should call stopSound with correct sound name", () => {
+    stopSound("jump");
+    expect(stopSound).toHaveBeenCalledWith("jump");
   });
 
-  test('should call toggleMute', () => {
+  test("should call toggleMute", () => {
     toggleMute();
     expect(toggleMute).toHaveBeenCalled();
   });

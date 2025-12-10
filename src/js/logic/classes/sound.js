@@ -3,13 +3,13 @@ const sounds = {};
 
 // Define sound paths
 const soundPaths = {
-  jump: '../../../public/sounds/jump.wav',
-  coin: '../../../public/sounds/coin.wav',
-  damage: '../../../public/sounds/damage.wav',
-  gameOver: '../../../public/sounds/gameOver.wav',
-  levelComplete: '../../../public/sounds/levelUp.wav',
-  backgroundMusic: '../../../public/sounds/background.mp3',
-  gameComplete: '../../../public/sounds/gameComplete.wav',
+  jump: "../../../public/sounds/jump.wav",
+  coin: "../../../public/sounds/coin.wav",
+  damage: "../../../public/sounds/damage.wav",
+  gameOver: "../../../public/sounds/gameOver.wav",
+  levelComplete: "../../../public/sounds/levelUp.wav",
+  backgroundMusic: "../../../public/sounds/background.mp3",
+  gameComplete: "../../../public/sounds/gameComplete.wav",
 };
 
 /**
@@ -24,8 +24,8 @@ function playSound(soundName) {
     if (playPromise !== undefined) {
       playPromise.catch(error => {
         console.error(`Error playing sound ${soundName}:`, error);
-        if (error.name === 'NotAllowedError') {
-          console.warn('Sound autoplay was blocked by the browser. User interaction is required first.');
+        if (error.name === "NotAllowedError") {
+          console.warn("Sound autoplay was blocked by the browser. User interaction is required first.");
         }
       });
     }
@@ -70,17 +70,17 @@ function initSounds() {
       sounds[key] = new Audio(path);
 
       // Set properties for background music
-      if (key === 'backgroundMusic') {
+      if (key === "backgroundMusic") {
         sounds[key].loop = true;
         sounds[key].volume = 0.5;
       }
 
       // Add event listeners
-      sounds[key].addEventListener('play', () => {
+      sounds[key].addEventListener("play", () => {
         console.warn(`Playing sound: ${key}`);
       });
 
-      sounds[key].addEventListener('error', (e) => {
+      sounds[key].addEventListener("error", (e) => {
         console.error(`Error with sound: ${key}`, e);
       });
 

@@ -1,8 +1,8 @@
 /**
  * Represents the princess character in the final level
  */
-import { assets } from '../../assets';
-import Castle from './castle';
+import { assets } from "../../assets";
+import Castle from "./castle";
 
 export default class Princess {
   /**
@@ -43,7 +43,7 @@ export default class Princess {
   render(ctx) {
     // Render castle first
     this.castle.render(ctx);
-    const princessSprite = assets.images['princess_sprite'];
+    const princessSprite = assets.images["princess_sprite"];
     if (princessSprite) {
       const sourceX = this.animationFrame * 32;
       const sourceY = 0;
@@ -55,7 +55,7 @@ export default class Princess {
       );
     } else {
       // Fallback rendering
-      ctx.fillStyle = '#ff69b4';
+      ctx.fillStyle = "#ff69b4";
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
   }
@@ -72,8 +72,8 @@ export default class Princess {
       particleSystem.createScorePopup(
         this.x + this.width / 2,
         this.y - 20,
-        'Defeat all enemies first!',
-        '#ff0000'
+        "Defeat all enemies first!",
+        "#ff0000"
       );
       return;
     }
@@ -85,7 +85,7 @@ export default class Princess {
       this.x + this.width / 2,
       this.y + this.height / 2,
       30,
-      ['#ff69b4', '#ff1493', '#ffb6c1', '#ffc0cb']
+      ["#ff69b4", "#ff1493", "#ffb6c1", "#ffc0cb"]
     );
 
     // Create score popup

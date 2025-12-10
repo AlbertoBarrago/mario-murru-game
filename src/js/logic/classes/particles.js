@@ -102,7 +102,7 @@ export default class ParticleSystem {
      * @param {number} count - Number of particles to create
      * @param {string[]} colors - Array of colors to use for particles
      */
-  createExplosion(x, y, count = 20, colors = ['#ff0000', '#ff7700', '#ffff00']) {
+  createExplosion(x, y, count = 20, colors = ["#ff0000", "#ff7700", "#ffff00"]) {
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = 1 + Math.random() * 3;
@@ -162,8 +162,8 @@ export default class ParticleSystem {
 
     // Render score popups
     if (this.scorePopups) {
-      ctx.font = '16px Arial';
-      ctx.textAlign = 'center';
+      ctx.font = "16px Arial";
+      ctx.textAlign = "center";
 
       this.scorePopups.forEach(popup => {
         const alpha = popup.life / 40;
@@ -174,7 +174,7 @@ export default class ParticleSystem {
         ctx.strokeText(`+${popup.score}`, popup.x, popup.y);
       });
 
-      ctx.textAlign = 'left';
+      ctx.textAlign = "left";
     }
   }
 }

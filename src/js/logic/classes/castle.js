@@ -1,7 +1,7 @@
 /**
  * Represents the castle in the final level
  */
-import { assets } from '../../assets';
+import { assets } from "../../assets";
 
 export default class Castle {
   /**
@@ -28,7 +28,7 @@ export default class Castle {
      */
   render(ctx) {
     // Render castle
-    const castleSprite = assets.images['castle'];
+    const castleSprite = assets.images["castle"];
     if (castleSprite) {
       ctx.drawImage(
         castleSprite,
@@ -36,12 +36,12 @@ export default class Castle {
       );
     } else {
       // Fallback rendering
-      ctx.fillStyle = '#8B4513';
+      ctx.fillStyle = "#8B4513";
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 
     // Render barriers
-    ctx.fillStyle = '#8B4513';
+    ctx.fillStyle = "#8B4513";
     this.barriers.forEach(barrier => {
       ctx.fillRect(barrier.x, barrier.y, barrier.width, barrier.height);
     });

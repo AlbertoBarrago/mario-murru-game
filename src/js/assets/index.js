@@ -20,11 +20,11 @@ const assets = {
  */
 function loadAssets() {
   const imagesToLoad = [
-    { name: 'mario', src: 'public/images/sprites/mario.svg' },
-    { name: 'pepe', src: 'public/images/sprites/pepe.svg' },
-    { name: 'enemies_sprite', src: 'public/images/sprites/enemies.svg' },
-    { name: 'princess_sprite', src: 'public/images/sprites/princess.svg' },
-    { name: 'castle', src: 'public/images/png/castle.png' }
+    { name: "mario", src: "public/images/sprites/mario.svg" },
+    { name: "pepe", src: "public/images/sprites/pepe.svg" },
+    { name: "enemies_sprite", src: "public/images/sprites/enemies.svg" },
+    { name: "princess_sprite", src: "public/images/sprites/princess.svg" },
+    { name: "castle", src: "public/images/png/castle.png" }
   ];
 
   assets.total = imagesToLoad.length;
@@ -39,7 +39,7 @@ function loadAssets() {
     image.onerror = () => {
       console.error(`Failed to load image: ${img.src}`);
       const placeholder = new Image();
-      placeholder.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+      placeholder.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
       assets.images[img.name] = placeholder;
       assets.loaded++;
     };
@@ -52,7 +52,7 @@ function loadAssets() {
  */
 function checkAssetsLoaded(onComplete) {
   if (assets.loaded === assets.total) {
-    document.getElementById('loading').style.display = 'none';
+    document.getElementById("loading").style.display = "none";
     onComplete();
   } else {
     setTimeout(() => checkAssetsLoaded(onComplete), 100);

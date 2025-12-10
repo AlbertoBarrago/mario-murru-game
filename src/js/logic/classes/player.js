@@ -1,5 +1,5 @@
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from '../../constants';
-import { playSound } from './sound.js';
+import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from "../../constants";
+import { playSound } from "./sound.js";
 
 /**
  * Represents a player character in the game
@@ -19,7 +19,7 @@ export default class Player {
     this.velocityX = 0;
     this.velocityY = 0;
     this.isJumping = false;
-    this.direction = 'right';
+    this.direction = "right";
     this.frame = 0;
     this.frameCount = 3;
     this.frameDelay = 5;
@@ -29,7 +29,7 @@ export default class Player {
     this.invulnerable = false;
     this.invulnerableTimer = 0;
     this.invulnerableDuration = 60;
-    this.characterType = 'mario';
+    this.characterType = "mario";
   }
 
   /**
@@ -39,13 +39,13 @@ export default class Player {
      * @param {number} canvasHeight - Height of the game canvas
      */
   update(keys, canvasWidth, canvasHeight) {
-    if (keys['ArrowLeft'] || keys['KeyA']) {
+    if (keys["ArrowLeft"] || keys["KeyA"]) {
       this.velocityX = -MOVEMENT_SPEED;
-      this.direction = 'left';
+      this.direction = "left";
       this.frameTimer++;
-    } else if (keys['ArrowRight'] || keys['KeyD']) {
+    } else if (keys["ArrowRight"] || keys["KeyD"]) {
       this.velocityX = MOVEMENT_SPEED;
-      this.direction = 'right';
+      this.direction = "right";
       this.frameTimer++;
     } else {
       this.velocityX *= FRICTION;
@@ -53,16 +53,16 @@ export default class Player {
       this.frame = 0;
     }
 
-    if ((keys['ArrowUp'] || keys['KeyW'] || keys['Space']) && !this.isJumping) {
+    if ((keys["ArrowUp"] || keys["KeyW"] || keys["Space"]) && !this.isJumping) {
       this.velocityY = JUMP_FORCE;
       this.isJumping = true;
-      playSound('jump');
+      playSound("jump");
     }
 
-    if (keys['KeyT'] && !this.lastKeyT) {
-      this.characterType = this.characterType === 'pepe' ? 'mario' : 'pepe';
+    if (keys["KeyT"] && !this.lastKeyT) {
+      this.characterType = this.characterType === "pepe" ? "mario" : "pepe";
     }
-    this.lastKeyT = keys['KeyT'];
+    this.lastKeyT = keys["KeyT"];
 
     this.velocityY += GRAVITY;
 
@@ -106,7 +106,7 @@ export default class Player {
     }
 
     // Determine which sprite sheet to use based on a character type
-    const spriteSheet = this.characterType === 'pepe' ? 'pepe' : 'mario';
+    const spriteSheet = this.characterType === "pepe" ? "pepe" : "mario";
 
     // Calculate which frame to use based on state
     let frameIndex = 0; // Default to idle frame
@@ -119,7 +119,7 @@ export default class Player {
     }
 
     // If facing left, use the left-facing idle frame
-    if (this.direction === 'left' && !this.isJumping && this.velocityX === 0) {
+    if (this.direction === "left" && !this.isJumping && this.velocityX === 0) {
       frameIndex = 4; // Left-facing idle frame (5th frame)
     }
 
@@ -139,21 +139,21 @@ export default class Player {
       ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
     } catch (e) {
       // Fallback to colored rectangles if image fails to load
-      if (this.characterType === 'pepe') {
-        ctx.fillStyle = '#77b255';
+      if (this.characterType === "pepe") {
+        ctx.fillStyle = "#77b255";
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = "#000";
         ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
         ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
         ctx.beginPath();
         ctx.arc(this.x + 16, this.y + 20, 8, 0, Math.PI, false);
         ctx.stroke();
       } else {
-        ctx.fillStyle = '#FFC0CB';
+        ctx.fillStyle = "#FFC0CB";
         ctx.fillRect(this.x, this.y, this.width, this.height);
 
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = "#000";
         ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
         ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
         ctx.beginPath();
@@ -175,7 +175,7 @@ export default class Player {
     this.health -= damage;
     this.invulnerable = true;
     this.invulnerableTimer = 0;
-    playSound('damage');
+    playSound("damage");
     return this.health <= 0;
   }
 

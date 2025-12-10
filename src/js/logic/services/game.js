@@ -672,7 +672,7 @@ export function renderUI() {
 
   // Health text - centered in the bar
   ctx.fillStyle = "#fff";
-  ctx.font = '10px "Press Start 2P"';
+  ctx.font = "10px \"Press Start 2P\"";
   ctx.textAlign = "center";
   ctx.fillText(
     `HP: ${player.health}/100`,
@@ -721,7 +721,7 @@ export function renderUI() {
 
   // Level and score on the same line
   ctx.fillStyle = "#000";
-  ctx.font = '14px "Press Start 2P"';
+  ctx.font = "14px \"Press Start 2P\"";
   ctx.fillText(`Level: ${currentLevel}`, canvas.width - 300, healthBar.y + 11);
   ctx.fillText(`Score: ${score}`, canvas.width - 150, healthBar.y + 11);
 }

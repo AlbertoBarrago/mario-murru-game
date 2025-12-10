@@ -1,7 +1,7 @@
 /**
  * Represents an enemy character in the game
  */
-import { assets } from '../../assets';
+import { assets } from "../../assets";
 
 export default class Enemy {
   /**
@@ -71,7 +71,7 @@ export default class Enemy {
      * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
      */
   render(ctx) {
-    const enemySprite = assets.images['enemies_sprite'];
+    const enemySprite = assets.images["enemies_sprite"];
     if (enemySprite) {
       // Calculate the source x position based on enemy type and animation frame
       // Each enemy type has 2 frames (idle and walking/fading)
@@ -85,7 +85,7 @@ export default class Enemy {
       );
     } else {
       // Fallback rendering
-      ctx.fillStyle = '#ff0000';
+      ctx.fillStyle = "#ff0000";
       ctx.fillRect(this.x, this.y, this.width, this.height);
     }
   }
