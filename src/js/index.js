@@ -1,4 +1,3 @@
-// Import modules
 import "../css/style.css";
 import { checkAssetsLoaded, loadAssets } from "./assets";
 import { initSounds, toggleMute } from "./logic/classes/sound.js";
