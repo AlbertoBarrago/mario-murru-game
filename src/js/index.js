@@ -88,10 +88,6 @@ function gameLoop() {
     return;
   }
 
-  // Synchronize game state with window object if needed
-  state.started = window.gameStarted || state.started;
-  state.running = window.gameRunning || state.running;
-
   if (!state.started) {
     render();
   } else if (state.over) {

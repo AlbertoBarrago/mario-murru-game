@@ -12,8 +12,9 @@ export default class Enemy {
      * @param {number} height - The height of the enemy
      * @param {number} speed - The speed of the enemy
      * @param {number} type - The type of the enemy (0: Goomba, 1: Koopa, 2: Ghost)
+     * @param {Object} platformBounds - The platform boundaries {startX, endX}
      */
-  constructor(x, y, width, height, speed, type = 0) {
+  constructor(x, y, width, height, speed, type = 0, platformBounds = null) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -24,6 +25,7 @@ export default class Enemy {
     this.animationFrame = 0;
     this.frameCount = 0;
     this.isPaused = false;
+    this.platformBounds = platformBounds;
   }
 
   /**
@@ -46,16 +48,26 @@ export default class Enemy {
 
   /**
      * Updates the enemy's position and animation state
-     * @param {number} canvasWidth - The width of the game canvas
+     * @param {number} canvasWidth - The width of the game canvas (fallback)
      */
   update(canvasWidth) {
     if (this.isPaused) return;
 
     this.x += this.speed * this.direction;
 
-    // Boundary check
-    if (this.x <= 0 || this.x + this.width >= canvasWidth) {
-      this.direction *= -1;
+    // Boundary check - use platform bounds if available, otherwise use canvas
+    if (this.platformBounds) {
+      // Turn around at platform edges
+      if (this.x <= this.platformBounds.startX || this.x + this.width >= this.platformBounds.endX) {
+        this.direction *= -1;
+        // Clamp position to prevent enemy from going off platform
+        this.x = Math.max(this.platformBounds.startX, Math.min(this.x, this.platformBounds.endX - this.width));
+      }
+    } else {
+      // Fallback to canvas boundaries
+      if (this.x <= 0 || this.x + this.width >= canvasWidth) {
+        this.direction *= -1;
+      }
     }
 
     // Animation
