@@ -1,8 +1,10 @@
 import { assets } from "../../assets";
 import {
+  FALL_MULTIPLIER,
   FRICTION,
   GRAVITY,
   JUMP_FORCE,
+  LOW_JUMP_MULTIPLIER,
   MAX_HEALTH,
   MOVEMENT_SPEED,
 } from "../../constants";
@@ -71,7 +73,14 @@ export default class Player {
     }
     this.lastKeyT = keys["KeyT"];
 
-    this.velocityY += GRAVITY;
+    const jumpPressed = keys["ArrowUp"] || keys["KeyW"] || keys["Space"];
+    if (this.velocityY > 0) {
+      this.velocityY += GRAVITY * FALL_MULTIPLIER;
+    } else if (this.velocityY < 0 && !jumpPressed) {
+      this.velocityY += GRAVITY * LOW_JUMP_MULTIPLIER;
+    } else {
+      this.velocityY += GRAVITY;
+    }
 
     if (this.velocityY > 15) {
       this.velocityY = 15;
