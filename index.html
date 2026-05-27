@@ -29,11 +29,11 @@
         </div>
     </div>
     <script>
-        window.addEventListener('load', function () {
-            document.getElementById('start-button').addEventListener('click', function () {
+        window.addEventListener('load', () => {
+            document.getElementById('start-button').addEventListener('click', () => {
                 document.getElementById('startScreen').style.display = 'none';
                 document.getElementById('instructions').style.display = 'block';
-                setTimeout(function () {
+                setTimeout(() => {
                     document.getElementById('instructions').style.display = 'none';
                 }, 2000);
 

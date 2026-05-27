@@ -13,6 +13,8 @@
 
 export const GRAVITY = 0.5;
 export const JUMP_FORCE = -15;
+export const FALL_MULTIPLIER = 2.5;
+export const LOW_JUMP_MULTIPLIER = 2.0;
 export const MOVEMENT_SPEED = 5;
 export const FRICTION = 0.8;
 export const MAX_HEALTH = 100;

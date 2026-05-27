@@ -1,5 +1,5 @@
 import Player from "../src/js/logic/classes/player.js";
-import { GRAVITY, MAX_HEALTH } from "../src/js/constants";
+import { GRAVITY, FALL_MULTIPLIER, LOW_JUMP_MULTIPLIER, MAX_HEALTH } from "../src/js/constants";
 
 jest.mock("../src/js/logic/classes/sound.js", () => ({
   playSound: jest.fn(),
@@ -401,11 +401,10 @@ describe("Player Damage and Movement Methods", () => {
   });
 
   test("should apply gravity and cap falling speed", () => {
+    // Falling (velocityY > 0): FALL_MULTIPLIER applied
     player.velocityY = 10;
     player.update({}, 800, 600);
-
-    // Gravity should increase velocityY
-    expect(player.velocityY).toBe(10 + GRAVITY);
+    expect(player.velocityY).toBe(10 + GRAVITY * FALL_MULTIPLIER);
 
     // Set velocityY to the just below cap
     player.velocityY = 14.9;
@@ -423,7 +422,8 @@ describe("Player Damage and Movement Methods", () => {
     player.update({}, 800, 600);
 
     expect(player.x).toBe(initialX + 4);
-    expect(player.y).toBe(97.5);
+    // velocityY=-3, no jump held → LOW_JUMP_MULTIPLIER applies: y = 100 + (-3 + GRAVITY * LOW_JUMP_MULTIPLIER)
+    expect(player.y).toBe(100 + (-3 + GRAVITY * LOW_JUMP_MULTIPLIER));
 
   });
 
