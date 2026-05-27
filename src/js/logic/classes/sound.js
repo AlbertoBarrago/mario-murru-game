@@ -22,10 +22,12 @@ function playSound(soundName) {
     const playPromise = sounds[soundName].play();
 
     if (playPromise !== undefined) {
-      playPromise.catch(error => {
+      playPromise.catch((error) => {
         console.error(`Error playing sound ${soundName}:`, error);
         if (error.name === "NotAllowedError") {
-          console.warn("Sound autoplay was blocked by the browser. User interaction is required first.");
+          console.warn(
+            "Sound autoplay was blocked by the browser. User interaction is required first.",
+          );
         }
       });
     }
@@ -54,7 +56,7 @@ let muted = false;
  */
 function toggleMute() {
   muted = !muted;
-  Object.values(sounds).forEach(sound => {
+  Object.values(sounds).forEach((sound) => {
     sound.muted = muted;
   });
   return muted;
@@ -90,7 +92,6 @@ function initSounds() {
       console.error(`Failed to initialize sound: ${key}`, error);
     }
   });
-
 }
 
-export { sounds, playSound, stopSound, toggleMute, initSounds };
+export { initSounds, playSound, sounds, stopSound, toggleMute };

@@ -1,4 +1,11 @@
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from "../../constants";
+import { assets } from "../../assets";
+import {
+  FRICTION,
+  GRAVITY,
+  JUMP_FORCE,
+  MAX_HEALTH,
+  MOVEMENT_SPEED,
+} from "../../constants";
 import { playSound } from "./sound.js";
 
 /**
@@ -7,10 +14,10 @@ import { playSound } from "./sound.js";
  */
 export default class Player {
   /**
-     * Creates a new Player instance
-     * @param {number} x - Initial x coordinate
-     * @param {number} y - Initial y coordinate
-     */
+   * Creates a new Player instance
+   * @param {number} x - Initial x coordinate
+   * @param {number} y - Initial y coordinate
+   */
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -33,11 +40,11 @@ export default class Player {
   }
 
   /**
-     * Updates the player's state based on input and game physics
-     * @param {Object} keys - Current keyboard state
-     * @param {number} canvasWidth - Width of the game canvas
-     * @param {number} canvasHeight - Height of the game canvas
-     */
+   * Updates the player's state based on input and game physics
+   * @param {Object} keys - Current keyboard state
+   * @param {number} canvasWidth - Width of the game canvas
+   * @param {number} canvasHeight - Height of the game canvas
+   */
   update(keys, canvasWidth, canvasHeight) {
     if (keys["ArrowLeft"] || keys["KeyA"]) {
       this.velocityX = -MOVEMENT_SPEED;
@@ -97,80 +104,94 @@ export default class Player {
   }
 
   /**
-     * Renders the player character on the canvas
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
-     */
+   * Renders the player character on the canvas
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+   */
   render(ctx) {
     if (this.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
       ctx.globalAlpha = 0.5;
     }
 
-    // Determine which sprite sheet to use based on a character type
-    const spriteSheet = this.characterType === "pepe" ? "pepe" : "mario";
-
-    // Calculate which frame to use based on state
-    let frameIndex = 0; // Default to idle frame
-
-    if (this.isJumping) {
-      frameIndex = 3; // Jumping to frame (4th frame in the sprite sheet)
-    } else if (this.velocityX !== 0) {
-      // Walking animation (frames 1-2 in the sprite sheet)
-      frameIndex = this.frame + 1;
-    }
-
-    // If facing left, use the left-facing idle frame
-    if (this.direction === "left" && !this.isJumping && this.velocityX === 0) {
-      frameIndex = 4; // Left-facing idle frame (5th frame)
-    }
-
-    // If damaged/hurt, use the hurt frame
-    if (this.invulnerable) {
-      frameIndex = 5; // Hurt frame (6th frame)
-    }
-
-    // Calculate the classes position in the sprite sheet
-    const sourceX = frameIndex * 32; // Each frame is 32px wide
-    const sourceY = 0;
-
-    // Draw the sprite
     try {
-      const img = new Image();
-      img.src = `public/images/sprites/${spriteSheet}.svg`;
-      ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
-    } catch (e) {
-      // Fallback to colored rectangles if image fails to load
-      if (this.characterType === "pepe") {
-        ctx.fillStyle = "#77b255";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+      // Determine which sprite sheet to use based on a character type
+      const spriteSheet = this.characterType === "pepe" ? "pepe" : "mario";
 
-        ctx.fillStyle = "#000";
-        ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-        ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
-        ctx.beginPath();
-        ctx.arc(this.x + 16, this.y + 20, 8, 0, Math.PI, false);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = "#FFC0CB";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+      // Calculate which frame to use based on state
+      let frameIndex = 0; // Default to idle frame
 
-        ctx.fillStyle = "#000";
-        ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-        ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
-        ctx.beginPath();
-        ctx.arc(this.x + 16, this.y + 20, 5, 0, Math.PI, false);
-        ctx.stroke();
+      if (this.isJumping) {
+        frameIndex = 3; // Jumping to frame (4th frame in the sprite sheet)
+      } else if (this.velocityX !== 0) {
+        // Walking animation (frames 1-2 in the sprite sheet)
+        frameIndex = this.frame + 1;
       }
-      console.error(`Failed to load image: ${e.message}`);
-    }
 
-    ctx.globalAlpha = 1.0;
+      // If facing left, use the left-facing idle frame
+      if (
+        this.direction === "left" &&
+        !this.isJumping &&
+        this.velocityX === 0
+      ) {
+        frameIndex = 4; // Left-facing idle frame (5th frame)
+      }
+
+      // If damaged/hurt, use the hurt frame
+      if (this.invulnerable) {
+        frameIndex = 5; // Hurt frame (6th frame)
+      }
+
+      // Calculate the classes position in the sprite sheet
+      const sourceX = frameIndex * 32; // Each frame is 32px wide
+      const sourceY = 0;
+
+      // Draw the sprite
+      const img = assets.images[spriteSheet];
+      if (img) {
+        ctx.drawImage(
+          img,
+          sourceX,
+          sourceY,
+          32,
+          32,
+          this.x,
+          this.y,
+          this.width,
+          this.height,
+        );
+      } else {
+        // Fallback to colored rectangles if image is not yet loaded
+        if (this.characterType === "pepe") {
+          ctx.fillStyle = "#77b255";
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+
+          ctx.fillStyle = "#000";
+          ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+          ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+          ctx.beginPath();
+          ctx.arc(this.x + 16, this.y + 20, 8, 0, Math.PI, false);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = "#FFC0CB";
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+
+          ctx.fillStyle = "#000";
+          ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+          ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+          ctx.beginPath();
+          ctx.arc(this.x + 16, this.y + 20, 5, 0, Math.PI, false);
+          ctx.stroke();
+        }
+      }
+    } finally {
+      ctx.globalAlpha = 1.0;
+    }
   }
 
   /**
-     * Applies damage to the player and triggers invulnerability
-     * @param {number} damage - Amount of damage to apply
-     * @returns {boolean} - Whether the player's health has reached zero
-     */
+   * Applies damage to the player and triggers invulnerability
+   * @param {number} damage - Amount of damage to apply
+   * @returns {boolean} - Whether the player's health has reached zero
+   */
   takeDamage(damage) {
     this.health -= damage;
     this.invulnerable = true;
@@ -180,16 +201,19 @@ export default class Player {
   }
 
   /**
-     * Resets the player's position and state
-     * @param {number} x - New x coordinate
-     * @param {number} y - New y coordinate
-     */
+   * Resets the player's position and state
+   * @param {number} x - New x coordinate
+   * @param {number} y - New y coordinate
+   */
   reset(x, y) {
     this.x = x;
     this.y = y;
     this.velocityX = 0;
     this.velocityY = 0;
     this.health = MAX_HEALTH;
+    this.isJumping = false;
+    this.invulnerable = false;
+    this.invulnerableTimer = 0;
   }
 
   /**
@@ -200,7 +224,7 @@ export default class Player {
       velocityX: this.velocityX,
       velocityY: this.velocityY,
       frameTimer: this.frameTimer,
-      frame: this.frame
+      frame: this.frame,
     };
     this.velocityX = 0;
     this.velocityY = 0;
