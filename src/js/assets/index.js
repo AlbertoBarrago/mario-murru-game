@@ -11,7 +11,7 @@ const assets = {
   images: {},
   sounds: {},
   loaded: 0,
-  total: 0
+  total: 0,
 };
 
 /**
@@ -24,12 +24,12 @@ function loadAssets() {
     { name: "pepe", src: "public/images/sprites/pepe.svg" },
     { name: "enemies_sprite", src: "public/images/sprites/enemies.svg" },
     { name: "princess_sprite", src: "public/images/sprites/princess.svg" },
-    { name: "castle", src: "public/images/png/castle.png" }
+    { name: "castle", src: "public/images/png/castle.png" },
   ];
 
   assets.total = imagesToLoad.length;
 
-  imagesToLoad.forEach(img => {
+  imagesToLoad.forEach((img) => {
     const image = new Image();
     image.src = img.src;
     image.onload = () => {
@@ -39,7 +39,8 @@ function loadAssets() {
     image.onerror = () => {
       console.error(`Failed to load image: ${img.src}`);
       const placeholder = new Image();
-      placeholder.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+      placeholder.src =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
       assets.images[img.name] = placeholder;
       assets.loaded++;
     };
@@ -59,4 +60,4 @@ function checkAssetsLoaded(onComplete) {
   }
 }
 
-export { assets, loadAssets, checkAssetsLoaded };
+export { assets, checkAssetsLoaded, loadAssets };

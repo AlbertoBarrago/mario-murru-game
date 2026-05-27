@@ -4,10 +4,10 @@
  */
 export default class Coin {
   /**
-     * Creates a new coin instance
-     * @param {number} x - The x-coordinate of the coin
-     * @param {number} y - The y-coordinate of the coin
-     */
+   * Creates a new coin instance
+   * @param {number} x - The x-coordinate of the coin
+   * @param {number} y - The y-coordinate of the coin
+   */
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -21,8 +21,8 @@ export default class Coin {
   }
 
   /**
-     * Updates the coin's animation state
-     */
+   * Updates the coin's animation state
+   */
   update() {
     if (!this.collected) {
       this.frameTimer++;
@@ -34,14 +34,20 @@ export default class Coin {
   }
 
   /**
-     * Renders the coin on the canvas
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
-     */
+   * Renders the coin on the canvas
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+   */
   render(ctx) {
     if (!this.collected) {
       ctx.fillStyle = "#ffd700";
       ctx.beginPath();
-      ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2);
+      ctx.arc(
+        this.x + this.width / 2,
+        this.y + this.height / 2,
+        this.width / 2,
+        0,
+        Math.PI * 2,
+      );
       ctx.fill();
     }
   }

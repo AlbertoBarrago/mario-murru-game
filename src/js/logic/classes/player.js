@@ -1,6 +1,12 @@
-import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from "../../constants";
-import { playSound } from "./sound.js";
 import { assets } from "../../assets";
+import {
+  FRICTION,
+  GRAVITY,
+  JUMP_FORCE,
+  MAX_HEALTH,
+  MOVEMENT_SPEED,
+} from "../../constants";
+import { playSound } from "./sound.js";
 
 /**
  * Represents a player character in the game
@@ -8,10 +14,10 @@ import { assets } from "../../assets";
  */
 export default class Player {
   /**
-     * Creates a new Player instance
-     * @param {number} x - Initial x coordinate
-     * @param {number} y - Initial y coordinate
-     */
+   * Creates a new Player instance
+   * @param {number} x - Initial x coordinate
+   * @param {number} y - Initial y coordinate
+   */
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -34,11 +40,11 @@ export default class Player {
   }
 
   /**
-     * Updates the player's state based on input and game physics
-     * @param {Object} keys - Current keyboard state
-     * @param {number} canvasWidth - Width of the game canvas
-     * @param {number} canvasHeight - Height of the game canvas
-     */
+   * Updates the player's state based on input and game physics
+   * @param {Object} keys - Current keyboard state
+   * @param {number} canvasWidth - Width of the game canvas
+   * @param {number} canvasHeight - Height of the game canvas
+   */
   update(keys, canvasWidth, canvasHeight) {
     if (keys["ArrowLeft"] || keys["KeyA"]) {
       this.velocityX = -MOVEMENT_SPEED;
@@ -98,9 +104,9 @@ export default class Player {
   }
 
   /**
-     * Renders the player character on the canvas
-     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
-     */
+   * Renders the player character on the canvas
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context
+   */
   render(ctx) {
     if (this.invulnerable && Math.floor(Date.now() / 100) % 2 === 0) {
       ctx.globalAlpha = 0.5;
@@ -121,7 +127,11 @@ export default class Player {
       }
 
       // If facing left, use the left-facing idle frame
-      if (this.direction === "left" && !this.isJumping && this.velocityX === 0) {
+      if (
+        this.direction === "left" &&
+        !this.isJumping &&
+        this.velocityX === 0
+      ) {
         frameIndex = 4; // Left-facing idle frame (5th frame)
       }
 
@@ -137,7 +147,17 @@ export default class Player {
       // Draw the sprite
       const img = assets.images[spriteSheet];
       if (img) {
-        ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
+        ctx.drawImage(
+          img,
+          sourceX,
+          sourceY,
+          32,
+          32,
+          this.x,
+          this.y,
+          this.width,
+          this.height,
+        );
       } else {
         // Fallback to colored rectangles if image is not yet loaded
         if (this.characterType === "pepe") {
@@ -168,10 +188,10 @@ export default class Player {
   }
 
   /**
-     * Applies damage to the player and triggers invulnerability
-     * @param {number} damage - Amount of damage to apply
-     * @returns {boolean} - Whether the player's health has reached zero
-     */
+   * Applies damage to the player and triggers invulnerability
+   * @param {number} damage - Amount of damage to apply
+   * @returns {boolean} - Whether the player's health has reached zero
+   */
   takeDamage(damage) {
     this.health -= damage;
     this.invulnerable = true;
@@ -181,10 +201,10 @@ export default class Player {
   }
 
   /**
-     * Resets the player's position and state
-     * @param {number} x - New x coordinate
-     * @param {number} y - New y coordinate
-     */
+   * Resets the player's position and state
+   * @param {number} x - New x coordinate
+   * @param {number} y - New y coordinate
+   */
   reset(x, y) {
     this.x = x;
     this.y = y;
@@ -204,7 +224,7 @@ export default class Player {
       velocityX: this.velocityX,
       velocityY: this.velocityY,
       frameTimer: this.frameTimer,
-      frame: this.frame
+      frame: this.frame,
     };
     this.velocityX = 0;
     this.velocityY = 0;

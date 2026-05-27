@@ -1,4 +1,3 @@
-import { playSound, sounds, stopSound } from "../classes/sound.js";
 import {
   COIN_SCORE,
   ENEMY_DAMAGE,
@@ -6,6 +5,7 @@ import {
   JUMP_FORCE,
   LAST_LEVEL,
 } from "../../constants";
+import { playSound, sounds, stopSound } from "../classes/sound.js";
 import { Coin, Enemy, ParticleSystem, Player, Princess } from "../index";
 
 const gameState = {
@@ -149,10 +149,12 @@ export function setupGame() {
 
   // Create enemy on the ground platform with platform bounds
   const groundPlatform = gameState.platforms[0];
-  gameState.enemies.push(new Enemy(300, 418, 32, 32, 2, 0, {
-    startX: groundPlatform.x,
-    endX: groundPlatform.x + groundPlatform.width
-  }));
+  gameState.enemies.push(
+    new Enemy(300, 418, 32, 32, 2, 0, {
+      startX: groundPlatform.x,
+      endX: groundPlatform.x + groundPlatform.width,
+    }),
+  );
 
   for (let i = 0; i < LAST_LEVEL; i++) {
     gameState.coins.push(new Coin(150 + i * 120, 300));
@@ -230,15 +232,15 @@ export function checkCollisions() {
 
   gameState.platforms.forEach((platform) => {
     const overlapX =
-			Math.min(
-			  gameState.player.x + gameState.player.width,
-			  platform.x + platform.width,
-			) - Math.max(gameState.player.x, platform.x);
+      Math.min(
+        gameState.player.x + gameState.player.width,
+        platform.x + platform.width,
+      ) - Math.max(gameState.player.x, platform.x);
     const overlapY =
-			Math.min(
-			  gameState.player.y + gameState.player.height,
-			  platform.y + platform.height,
-			) - Math.max(gameState.player.y, platform.y);
+      Math.min(
+        gameState.player.y + gameState.player.height,
+        platform.y + platform.height,
+      ) - Math.max(gameState.player.y, platform.y);
 
     if (overlapX > 0 && overlapY > 0) {
       if (overlapX < overlapY) {
@@ -271,13 +273,13 @@ export function checkCollisions() {
     const enemy = gameState.enemies[index];
     if (
       gameState.player.x + gameState.player.width > enemy.x &&
-			gameState.player.x < enemy.x + enemy.width &&
-			gameState.player.y + gameState.player.height > enemy.y &&
-			gameState.player.y < enemy.y + enemy.height
+      gameState.player.x < enemy.x + enemy.width &&
+      gameState.player.y + gameState.player.height > enemy.y &&
+      gameState.player.y < enemy.y + enemy.height
     ) {
       if (
         gameState.player.velocityY > 0 &&
-				gameState.player.y + gameState.player.height - 10 <= enemy.y
+        gameState.player.y + gameState.player.height - 10 <= enemy.y
       ) {
         // Create explosion effect at enemy position
         gameState.particleSystem.createExplosion(
@@ -333,11 +335,11 @@ export function checkCollisions() {
     // Final level - check collision with princess
     if (
       gameState.princess &&
-			!gameState.princess.isReached &&
-			gameState.player.x + gameState.player.width > gameState.princess.x &&
-			gameState.player.x < gameState.princess.x + gameState.princess.width &&
-			gameState.player.y + gameState.player.height > gameState.princess.y &&
-			gameState.player.y < gameState.princess.y + gameState.princess.height
+      !gameState.princess.isReached &&
+      gameState.player.x + gameState.player.width > gameState.princess.x &&
+      gameState.player.x < gameState.princess.x + gameState.princess.width &&
+      gameState.player.y + gameState.player.height > gameState.princess.y &&
+      gameState.player.y < gameState.princess.y + gameState.princess.height
     ) {
       if (gameState.princess.canBeReached && gameState.enemies.length === 0) {
         gameState.princess.reach(gameState.particleSystem, gameState);
@@ -361,10 +363,10 @@ export function checkCollisions() {
     gameState.coins.forEach((coin) => {
       if (
         !coin.collected &&
-				gameState.player.x + gameState.player.width > coin.x &&
-				gameState.player.x < coin.x + coin.width &&
-				gameState.player.y + gameState.player.height > coin.y &&
-				gameState.player.y < coin.y + coin.height
+        gameState.player.x + gameState.player.width > coin.x &&
+        gameState.player.x < coin.x + coin.width &&
+        gameState.player.y + gameState.player.height > coin.y &&
+        gameState.player.y < coin.y + coin.height
       ) {
         coin.collected = true;
         gameState.score += COIN_SCORE;
@@ -376,10 +378,10 @@ export function checkCollisions() {
     gameState.coins.forEach((coin) => {
       if (
         !coin.collected &&
-				gameState.player.x + gameState.player.width > coin.x &&
-				gameState.player.x < coin.x + coin.width &&
-				gameState.player.y + gameState.player.height > coin.y &&
-				gameState.player.y < coin.y + coin.height
+        gameState.player.x + gameState.player.width > coin.x &&
+        gameState.player.x < coin.x + coin.width &&
+        gameState.player.y + gameState.player.height > coin.y &&
+        gameState.player.y < coin.y + coin.height
       ) {
         coin.collected = true;
         gameState.score += COIN_SCORE;
@@ -397,7 +399,11 @@ export function checkLevelComplete() {
   const allEnemiesDefeated = gameState.enemies.length === 0;
 
   // Advance to next level if all coins are collected AND all enemies are defeated
-  if (allCoinsCollected && allEnemiesDefeated && gameState.currentLevel < LAST_LEVEL) {
+  if (
+    allCoinsCollected &&
+    allEnemiesDefeated &&
+    gameState.currentLevel < LAST_LEVEL
+  ) {
     playSound("levelComplete");
     gameState.currentLevel++;
     loadNextLevel();
@@ -415,12 +421,12 @@ function checkPlatformOverlap(newPlatform, existingPlatforms, minSpacing = 30) {
   for (const platform of existingPlatforms) {
     // Check if rectangles overlap with spacing
     const overlapX =
-			newPlatform.x < platform.x + platform.width + minSpacing &&
-			newPlatform.x + newPlatform.width + minSpacing > platform.x;
+      newPlatform.x < platform.x + platform.width + minSpacing &&
+      newPlatform.x + newPlatform.width + minSpacing > platform.x;
 
     const overlapY =
-			newPlatform.y < platform.y + platform.height + minSpacing &&
-			newPlatform.y + newPlatform.height + minSpacing > platform.y;
+      newPlatform.y < platform.y + platform.height + minSpacing &&
+      newPlatform.y + newPlatform.height + minSpacing > platform.y;
 
     if (overlapX && overlapY) {
       return true;
@@ -458,7 +464,8 @@ export function loadNextLevel() {
       attempts++;
 
       const platformWidth = Math.random() * 200 + 100;
-      const platformX = Math.random() * (gameState.canvas.width - platformWidth);
+      const platformX =
+        Math.random() * (gameState.canvas.width - platformWidth);
       const platformY = Math.random() * 250 + 150; // Keep platforms in a reasonable height range
 
       newPlatform = {
@@ -493,7 +500,7 @@ export function loadNextLevel() {
   for (let i = 0; i < enemyCount; i++) {
     // Place enemies on platforms - prioritize ground platform for stability
     const platformIndex =
-			i === 0 ? 0 : Math.floor(Math.random() * gameState.platforms.length);
+      i === 0 ? 0 : Math.floor(Math.random() * gameState.platforms.length);
     const platform = gameState.platforms[platformIndex];
 
     // Create enemy with proper parameters - ensure enemy stays on platform
@@ -519,8 +526,8 @@ export function loadNextLevel() {
         i % 3, // Vary enemy types
         {
           startX: platform.x,
-          endX: platform.x + platform.width
-        }
+          endX: platform.x + platform.width,
+        },
       );
 
       gameState.enemies.push(enemy);
@@ -547,7 +554,7 @@ export function loadNextLevel() {
       // Random position
       coin.x = Math.random() * (gameState.canvas.width - coin.width);
       coin.y =
-				Math.random() * (gameState.canvas.height - 100 - coin.height) + 50;
+        Math.random() * (gameState.canvas.height - 100 - coin.height) + 50;
 
       validPosition = true;
 
@@ -555,9 +562,9 @@ export function loadNextLevel() {
       for (const platform of gameState.platforms) {
         if (
           coin.x + coin.width > platform.x &&
-					coin.x < platform.x + platform.width &&
-					coin.y + coin.height > platform.y &&
-					coin.y < platform.y + platform.height
+          coin.x < platform.x + platform.width &&
+          coin.y + coin.height > platform.y &&
+          coin.y < platform.y + platform.height
         ) {
           // Coin is inside a platform, place it above
           coin.y = platform.y - coin.height - 5;
@@ -571,9 +578,9 @@ export function loadNextLevel() {
         // Check if coin is directly above or near a platform within jump range
         if (
           coin.x + coin.width > platform.x - 30 &&
-					coin.x < platform.x + platform.width + 30 &&
-					coin.y > platform.y - maxJumpHeight &&
-					coin.y < platform.y
+          coin.x < platform.x + platform.width + 30 &&
+          coin.y > platform.y - maxJumpHeight &&
+          coin.y < platform.y
         ) {
           reachable = true;
           break;
@@ -716,7 +723,7 @@ export function renderUI() {
 
   // Health text - centered in the bar
   ctx.fillStyle = "#fff";
-  ctx.font = "10px \"Press Start 2P\"";
+  ctx.font = '10px "Press Start 2P"';
   ctx.textAlign = "center";
   ctx.fillText(
     `HP: ${player.health}/100`,
@@ -765,7 +772,7 @@ export function renderUI() {
 
   // Level and score on the same line
   ctx.fillStyle = "#000";
-  ctx.font = "14px \"Press Start 2P\"";
+  ctx.font = '14px "Press Start 2P"';
   ctx.fillText(`Level: ${currentLevel}`, canvas.width - 300, healthBar.y + 11);
   ctx.fillText(`Score: ${score}`, canvas.width - 150, healthBar.y + 11);
 }
