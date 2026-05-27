@@ -104,7 +104,7 @@ function gameLoop() {
  * Render game over screen
  */
 function renderGameOver() {
-  const { ctx, canvas, score, keys, victory } = gameState;
+  const { ctx, canvas, score, victory } = gameState;
 
   ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -163,10 +163,6 @@ function renderGameOver() {
   }
 
   ctx.textAlign = "left";
-
-  if (keys["KeyR"]) {
-    restartGame();
-  }
 }
 
 window.onload = init;

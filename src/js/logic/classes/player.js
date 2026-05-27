@@ -1,5 +1,6 @@
 import { GRAVITY, JUMP_FORCE, MOVEMENT_SPEED, FRICTION, MAX_HEALTH } from "../../constants";
 import { playSound } from "./sound.js";
+import { assets } from "../../assets";
 
 /**
  * Represents a player character in the game
@@ -105,65 +106,65 @@ export default class Player {
       ctx.globalAlpha = 0.5;
     }
 
-    // Determine which sprite sheet to use based on a character type
-    const spriteSheet = this.characterType === "pepe" ? "pepe" : "mario";
-
-    // Calculate which frame to use based on state
-    let frameIndex = 0; // Default to idle frame
-
-    if (this.isJumping) {
-      frameIndex = 3; // Jumping to frame (4th frame in the sprite sheet)
-    } else if (this.velocityX !== 0) {
-      // Walking animation (frames 1-2 in the sprite sheet)
-      frameIndex = this.frame + 1;
-    }
-
-    // If facing left, use the left-facing idle frame
-    if (this.direction === "left" && !this.isJumping && this.velocityX === 0) {
-      frameIndex = 4; // Left-facing idle frame (5th frame)
-    }
-
-    // If damaged/hurt, use the hurt frame
-    if (this.invulnerable) {
-      frameIndex = 5; // Hurt frame (6th frame)
-    }
-
-    // Calculate the classes position in the sprite sheet
-    const sourceX = frameIndex * 32; // Each frame is 32px wide
-    const sourceY = 0;
-
-    // Draw the sprite
     try {
-      const img = new Image();
-      img.src = `public/images/sprites/${spriteSheet}.svg`;
-      ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
-    } catch (e) {
-      // Fallback to colored rectangles if image fails to load
-      if (this.characterType === "pepe") {
-        ctx.fillStyle = "#77b255";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+      // Determine which sprite sheet to use based on a character type
+      const spriteSheet = this.characterType === "pepe" ? "pepe" : "mario";
 
-        ctx.fillStyle = "#000";
-        ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-        ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
-        ctx.beginPath();
-        ctx.arc(this.x + 16, this.y + 20, 8, 0, Math.PI, false);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = "#FFC0CB";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+      // Calculate which frame to use based on state
+      let frameIndex = 0; // Default to idle frame
 
-        ctx.fillStyle = "#000";
-        ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
-        ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
-        ctx.beginPath();
-        ctx.arc(this.x + 16, this.y + 20, 5, 0, Math.PI, false);
-        ctx.stroke();
+      if (this.isJumping) {
+        frameIndex = 3; // Jumping to frame (4th frame in the sprite sheet)
+      } else if (this.velocityX !== 0) {
+        // Walking animation (frames 1-2 in the sprite sheet)
+        frameIndex = this.frame + 1;
       }
-      console.error(`Failed to load image: ${e.message}`);
-    }
 
-    ctx.globalAlpha = 1.0;
+      // If facing left, use the left-facing idle frame
+      if (this.direction === "left" && !this.isJumping && this.velocityX === 0) {
+        frameIndex = 4; // Left-facing idle frame (5th frame)
+      }
+
+      // If damaged/hurt, use the hurt frame
+      if (this.invulnerable) {
+        frameIndex = 5; // Hurt frame (6th frame)
+      }
+
+      // Calculate the classes position in the sprite sheet
+      const sourceX = frameIndex * 32; // Each frame is 32px wide
+      const sourceY = 0;
+
+      // Draw the sprite
+      const img = assets.images[spriteSheet];
+      if (img) {
+        ctx.drawImage(img, sourceX, sourceY, 32, 32, this.x, this.y, this.width, this.height);
+      } else {
+        // Fallback to colored rectangles if image is not yet loaded
+        if (this.characterType === "pepe") {
+          ctx.fillStyle = "#77b255";
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+
+          ctx.fillStyle = "#000";
+          ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+          ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+          ctx.beginPath();
+          ctx.arc(this.x + 16, this.y + 20, 8, 0, Math.PI, false);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = "#FFC0CB";
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+
+          ctx.fillStyle = "#000";
+          ctx.fillRect(this.x + 8, this.y + 8, 4, 4);
+          ctx.fillRect(this.x + 20, this.y + 8, 4, 4);
+          ctx.beginPath();
+          ctx.arc(this.x + 16, this.y + 20, 5, 0, Math.PI, false);
+          ctx.stroke();
+        }
+      }
+    } finally {
+      ctx.globalAlpha = 1.0;
+    }
   }
 
   /**
@@ -190,6 +191,9 @@ export default class Player {
     this.velocityX = 0;
     this.velocityY = 0;
     this.health = MAX_HEALTH;
+    this.isJumping = false;
+    this.invulnerable = false;
+    this.invulnerableTimer = 0;
   }
 
   /**

@@ -9,6 +9,20 @@ jest.mock("../src/js/logic/classes/sound.js", () => ({
   sounds: {}
 }));
 
+jest.mock("../src/js/assets/index.js", () => ({
+  assets: {
+    images: {
+      mario: { src: "mario.svg" },
+      pepe: { src: "pepe.svg" },
+    },
+    sounds: {},
+    loaded: 2,
+    total: 2,
+  },
+  loadAssets: jest.fn(),
+  checkAssetsLoaded: jest.fn(),
+}));
+
 describe("Player", () => {
   let player;
   const canvasWidth = 800;
@@ -130,7 +144,7 @@ describe("Player", () => {
     player.isJumping = true;
     player.render(ctx);
     expect(ctx.drawImage).toHaveBeenCalledWith(
-      expect.any(Image),
+      expect.any(Object),
       3 * 32, 0, 32, 32,
       player.x, player.y, player.width, player.height
     );
@@ -141,7 +155,7 @@ describe("Player", () => {
     player.velocityX = 0;
     player.render(ctx);
     expect(ctx.drawImage).toHaveBeenCalledWith(
-      expect.any(Image),
+      expect.any(Object),
       4 * 32, 0, 32, 32,
       player.x, player.y, player.width, player.height
     );
@@ -152,7 +166,7 @@ describe("Player", () => {
     Date.now = jest.fn(() => 1000);
     player.render(ctx);
     expect(ctx.drawImage).toHaveBeenCalledWith(
-      expect.any(Image),
+      expect.any(Object),
       5 * 32, 0, 32, 32,
       player.x, player.y, player.width, player.height
     );

@@ -40,10 +40,6 @@ export default class Enemy {
    */
   resume() {
     this.isPaused = false;
-    if (this.savedVelocity !== null) {
-      this.velocityX = this.savedVelocity;
-      this.savedVelocity = null;
-    }
   }
 
   /**

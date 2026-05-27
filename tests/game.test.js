@@ -278,8 +278,9 @@ describe("Game Service", () => {
       expect(playSound).not.toHaveBeenCalledWith("levelComplete");
     });
 
-    it("should complete level when all coins collected", () => {
+    it("should complete level when all coins collected and all enemies defeated", () => {
       gameState.coins.forEach((coin) => (coin.collected = true));
+      gameState.enemies = [];
       checkLevelComplete();
       expect(gameState.currentLevel).toBe(2);
       expect(playSound).toHaveBeenCalledWith("levelComplete");
